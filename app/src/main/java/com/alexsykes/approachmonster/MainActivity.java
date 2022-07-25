@@ -19,16 +19,12 @@ import com.alexsykes.approachmonster.data.NavaidRepository;
 import com.alexsykes.approachmonster.data.NavaidViewModel;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMapOptions;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.List;
@@ -36,7 +32,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
     private GoogleMap mMap;
     private final LatLng DEFAULT_LOCATION = new LatLng(53.355437, -2.277298);
-    private final int DEFAULT_ZOOM = 10;
+    private final int DEFAULT_ZOOM = 9;
     private final String TAG = "Info";
     private NavaidDao navaidDao;
     private NavaidViewModel navaidViewModel;
@@ -68,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
 
-        mMap.setMinZoomPreference(6);
+        mMap.setMinZoomPreference(5);
         mMap.setMaxZoomPreference(12);
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setMapToolbarEnabled(false);
@@ -84,13 +80,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 //                .title("EGCC"));
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LOCATION, DEFAULT_ZOOM));
-        addNavaidsToMap(airfieldList);
+        addNavaidsToMap(airfieldList, 0);
+        addNavaidsToMap(vorList, 1);
+        addNavaidsToMap(vrpList, 2);
     }
 
-    private void addNavaidsToMap(List<Navaid> navaids) {
+    private void addNavaidsToMap(List<Navaid> navaids, int typeCode) {
         if (navaids.size() == 0) {
             return;
         }
+
         String marker_title, code, type;
         LatLng latLng;
 
@@ -102,27 +101,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     .title(navaid.getCode())
                     .visible(true);
 
-            type = navaid.getType();
-            Log.i(TAG, "addNavaidsToMap: " + navaid.getType());
-            switch(type)  {
-                case "Airfield" :
+            switch(typeCode)  {
+                case 0 :
                     markerOptions.icon(BitmapFromVector(getApplicationContext(), R.drawable.circle_6));
                     break;
-//                case "Fuel" :
-//                    markerOptions.icon(BitmapFromVector(getApplicationContext(), R.drawable.fuel_36));
-//                    break;
-//                case "Waypoint" :
-//                    // markerOptions.icon(BitmapFromVector(getApplicationContext(), R.drawable.home_48));
-//                    break;
-//                case "Food" :
-//                    markerOptions.icon(BitmapFromVector(getApplicationContext(), R.drawable.food_36));
-//                    break;
-//                case "Junction" :
-////                    markerOptions.icon(BitmapFromVector(getApplicationContext(), R.drawable.parking_36));
-//                    break;
-//                case "Parking" :
-//                    markerOptions.icon(BitmapFromVector(getApplicationContext(), R.drawable.parking_36));
-//                    break;
+                case 1 :
+                    markerOptions.icon(BitmapFromVector(getApplicationContext(), R.drawable.control_point_12));
+                    break;
+                case 2 :
+                    markerOptions.icon(BitmapFromVector(getApplicationContext(), R.drawable.crisis_alert_12));
+                    break;
                 default:
                     break;
             }
