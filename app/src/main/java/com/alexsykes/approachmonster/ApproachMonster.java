@@ -11,7 +11,6 @@ public class ApproachMonster extends Application {
     public void onCreate() {
         super.onCreate();
         Log.i("Info", "onCreateLaunch: ");
-        ApproachDatabase db = ApproachDatabase.getDatabase(getApplicationContext());
         Log.i("Info", "onCreateLaunch: done ");
     }
 }
