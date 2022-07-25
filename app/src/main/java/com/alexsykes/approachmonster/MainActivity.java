@@ -2,10 +2,14 @@ package com.alexsykes.approachmonster;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
 import android.util.Log;
 
+import com.alexsykes.approachmonster.data.ApproachDatabase;
+import com.alexsykes.approachmonster.data.NavaidDao;
+import com.alexsykes.approachmonster.data.NavaidViewModel;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
@@ -21,6 +25,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private final LatLng DEFAULT_LOCATION = new LatLng(53.355437, -2.277298);
     private final int DEFAULT_ZOOM = 10;
     private final String TAG = "Info";
+    private NavaidDao navaidDao;
+    private NavaidViewModel navaidViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,13 +36,24 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .findFragmentById(R.id.map);
         assert mapFragment != null;
         mapFragment.getMapAsync(this);
+
+        ApproachDatabase db = ApproachDatabase.getDatabase(this);
+        navaidViewModel = new ViewModelProvider(this).get(NavaidViewModel.class);
+        navaidDao = db.navaidDao();
     }
 
     @Override
-    public void onMapReady(@NonNull GoogleMap map) {
-        map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+    public void onMapReady(@NonNull GoogleMap mMap) {
+        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
-        boolean success = map.setMapStyle(new MapStyleOptions(getResources()
+
+        mMap.setMinZoomPreference(6);
+        mMap.setMaxZoomPreference(12);
+        mMap.getUiSettings().setZoomControlsEnabled(true);
+        mMap.getUiSettings().setMapToolbarEnabled(false);
+        mMap.getUiSettings().setCompassEnabled(false);
+
+        boolean success = mMap.setMapStyle(new MapStyleOptions(getResources()
                 .getString(R.string.map_style)));
 
         if (!success) {
@@ -46,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 //                .position(DEFAULT_LOCATION)
 //                .title("EGCC"));
 
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LOCATION, DEFAULT_ZOOM));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LOCATION, DEFAULT_ZOOM));
 
     }
 }
