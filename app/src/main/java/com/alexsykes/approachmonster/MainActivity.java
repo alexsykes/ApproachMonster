@@ -106,10 +106,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     markerOptions.icon(BitmapFromVector(getApplicationContext(), R.drawable.circle_6));
                     break;
                 case 1 :
-                    markerOptions.icon(BitmapFromVector(getApplicationContext(), R.drawable.control_point_12));
+                    markerOptions.icon(BitmapFromVector(getApplicationContext(), R.drawable.target_12));
                     break;
                 case 2 :
-                    markerOptions.icon(BitmapFromVector(getApplicationContext(), R.drawable.crisis_alert_12));
+                    markerOptions.icon(BitmapFromVector(getApplicationContext(), R.drawable.triangle_48));
                     break;
                 default:
                     break;
