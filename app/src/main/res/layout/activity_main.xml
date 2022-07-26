@@ -18,6 +18,7 @@
         tools:context=".activities.MapsActivity" />
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/standard_margin"
@@ -41,22 +42,72 @@
             android:id="@+id/navaidNameTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/purple_700"
-            android:layout_margin="@dimen/small_margin"/>
+            android:layout_margin="@dimen/small_margin"
+            android:textColor="@color/purple_700" />
 
         <TextView
             android:id="@+id/navaidTypeTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/purple_700"
-            android:layout_margin="@dimen/small_margin" />
+            android:layout_margin="@dimen/small_margin"
+            android:textColor="@color/purple_700" />
 
         <TextView
             android:id="@+id/navaidDetailTextView"
-            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="@dimen/small_margin"
             android:textColor="@color/purple_700"
-            android:layout_margin="@dimen/small_margin" />
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/dark"
+        app:layout_constraintEnd_toStartOf="@+id/linearLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/airportSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/small_margin"
+            android:background="@color/dark"
+            android:textColor="@color/white"
+            android:layout_weight="1"
+            android:text="@string/airports" />
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/waypointSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/small_margin"
+            android:background="@color/dark"
+            android:textColor="@color/white"
+            android:layout_weight="1"
+            android:text="@string/waypoints" />
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/vorSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/small_margin"
+            android:background="@color/dark"
+            android:textColor="@color/white"
+            android:layout_weight="1"
+            android:text="@string/vor" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
