@@ -33,4 +33,6 @@ public class NavaidRepository {
     public List<Navaid> getAllVrps() {
         return vrpList;
     }
+
+    public Navaid getNavaidById(int id) { return navaidDao.getMarkerById(id);    }
 }

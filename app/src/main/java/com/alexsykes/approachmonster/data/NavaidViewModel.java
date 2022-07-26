@@ -30,4 +30,6 @@ public class NavaidViewModel extends AndroidViewModel {
     public List<Navaid> getAllVrps() {
         return allVrps;
     }
+
+    public Navaid getNavaidById(int id) { return navaidRepository.getNavaidById(id); }
 }

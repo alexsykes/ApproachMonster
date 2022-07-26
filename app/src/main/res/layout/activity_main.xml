@@ -36,5 +36,23 @@
             android:text="@string/info"
             android:textColor="@color/purple_200"
             android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/navaidNameTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/small_margin"/>
+
+        <TextView
+            android:id="@+id/navaidTypeTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/small_margin" />
+
+        <TextView
+            android:id="@+id/navaidDetailTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/small_margin" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

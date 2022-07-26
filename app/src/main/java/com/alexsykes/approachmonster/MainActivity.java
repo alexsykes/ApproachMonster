@@ -11,6 +11,7 @@ import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.alexsykes.approachmonster.data.ApproachDatabase;
 import com.alexsykes.approachmonster.data.Navaid;
@@ -40,6 +41,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private NavaidRepository navaidRepository;
     List<Navaid> airfieldList, vrpList, vorList;
 
+    TextView infoBoxTitleTextView, navaidNameTextView, navaidDetailTextView, navaidTypeTextView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +60,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         airfieldList = navaidViewModel.getAllAirfields();
         vrpList = navaidViewModel.getAllVrps();
         vorList = navaidViewModel.getAllVors();
+
+        setupUi();
+    }
+
+    private void setupUi() {
+        infoBoxTitleTextView =  findViewById(R.id.infoBoxTitleTextView);
+        navaidNameTextView =  findViewById(R.id.navaidNameTextView);
+        navaidDetailTextView = findViewById(R.id.navaidDetailTextView);
+        navaidTypeTextView = findViewById(R.id.navaidTypeTextView);
     }
 
     @Override
@@ -85,14 +97,23 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LOCATION, DEFAULT_ZOOM));
-        addNavaidsToMap(airfieldList, 1);
-        addNavaidsToMap(vorList, 2);
-        addNavaidsToMap(vrpList, 2);
+//        addNavaidsToMap(vrpList, 0);
+//        addNavaidsToMap(airfieldList, 1);
+//        addNavaidsToMap(vorList, 2);
     }
 
     private void markerClicked(Marker marker) {
-
         Log.i(TAG, "onMarkerClick: " + marker.getTag());
+        if(marker.getTag()!=null) {
+            int markerId = (int) marker.getTag();
+            Navaid navaid = navaidViewModel.getNavaidById(markerId);
+
+            infoBoxTitleTextView.setText(navaid.getCode());
+            navaidNameTextView.setText(navaid.getName());
+            navaidTypeTextView.setText(navaid.getType());
+        }
+//        navaidDetailTextView.setText(navaid.);
+
     }
 
     private void addNavaidsToMap(List<Navaid> navaids, int typeCode) {
@@ -116,15 +137,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             switch(typeCode)  {
                 case 0 :
-                    // Airfield
+                    // VRP
                     markerOptions.icon(star);
                     break;
                 case 1 :
-                    // VOR
+                    // Airfield
                     markerOptions.icon(square);
                     break;
                 case 2 :
-                    // VRP
+                    // VOR
                     markerOptions.icon(target);
                     break;
                 default:
