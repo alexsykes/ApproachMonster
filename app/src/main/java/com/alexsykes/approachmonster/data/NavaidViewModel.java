@@ -10,13 +10,15 @@ import java.util.List;
 public class NavaidViewModel extends AndroidViewModel {
     private NavaidRepository navaidRepository;
 
-    private final List<Navaid> allAirfields, allVors, allVrps;
+    private final List<Navaid> allAirfields, allVors, allVrps, allWaypoints;
+
     public NavaidViewModel(@NonNull Application application) {
         super(application);
         navaidRepository = new NavaidRepository(application);
         allAirfields = navaidRepository.getAllAirfields();
         allVors = navaidRepository.getAllVors();
         allVrps = navaidRepository.getAllVrps();
+        allWaypoints = navaidRepository.getAllWaypoints();
     }
 
     public List<Navaid> getAllAirfields() {
@@ -32,4 +34,7 @@ public class NavaidViewModel extends AndroidViewModel {
     }
 
     public Navaid getNavaidById(int id) { return navaidRepository.getNavaidById(id); }
+
+    public List<Navaid> getAllWaypoints() { return allWaypoints; }
+
 }

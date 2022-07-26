@@ -9,6 +9,7 @@ public class NavaidRepository {
     private List<Navaid> vorList;
     private List<Navaid> airfieldList;
     private List<Navaid> vrpList;
+    private List<Navaid> allWaypoints;
 
     NavaidRepository(Application application) {
         ApproachDatabase db = ApproachDatabase.getDatabase(application);
@@ -17,6 +18,7 @@ public class NavaidRepository {
         airfieldList = navaidDao.getAllAirfields();
         vorList = navaidDao.getAllVors();
         vrpList = navaidDao.getAllVrps();
+        allWaypoints = navaidDao.getAllWaypoints();
     }
 
     void insertNavaid(Navaid navaid) {
@@ -35,4 +37,6 @@ public class NavaidRepository {
     }
 
     public Navaid getNavaidById(int id) { return navaidDao.getMarkerById(id);    }
+
+    public List<Navaid> getAllWaypoints() { return allWaypoints;     }
 }

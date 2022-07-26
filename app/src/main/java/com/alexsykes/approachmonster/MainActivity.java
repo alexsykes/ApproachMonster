@@ -38,8 +38,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private final String TAG = "Info";
     private NavaidDao navaidDao;
     private NavaidViewModel navaidViewModel;
-    private NavaidRepository navaidRepository;
-    List<Navaid> airfieldList, vrpList, vorList;
+    List<Navaid> airfieldList, vrpList, vorList, waypointList;
 
     TextView infoBoxTitleTextView, navaidNameTextView, navaidDetailTextView, navaidTypeTextView;
 
@@ -54,12 +53,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         ApproachDatabase db = ApproachDatabase.getDatabase(this);
         navaidViewModel = new ViewModelProvider(this).get(NavaidViewModel.class);
-//        navaidRepository =
         navaidDao = db.navaidDao();
 
         airfieldList = navaidViewModel.getAllAirfields();
         vrpList = navaidViewModel.getAllVrps();
         vorList = navaidViewModel.getAllVors();
+        waypointList = navaidViewModel.getAllWaypoints();
 
         setupUi();
     }
@@ -75,8 +74,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(@NonNull GoogleMap mMap) {
         this.mMap = mMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-
-
         mMap.setMinZoomPreference(5);
         mMap.setMaxZoomPreference(12);
         mMap.getUiSettings().setZoomControlsEnabled(true);
@@ -97,9 +94,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LOCATION, DEFAULT_ZOOM));
-//        addNavaidsToMap(vrpList, 0);
-//        addNavaidsToMap(airfieldList, 1);
-//        addNavaidsToMap(vorList, 2);
+        addNavaidsToMap(waypointList, 0);
+        addNavaidsToMap(airfieldList, 1);
+        addNavaidsToMap(vorList, 2);
     }
 
     private void markerClicked(Marker marker) {

@@ -4,6 +4,7 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="app/src/main/res/drawable/circle_6.xml" value="0.526" />
+        <entry key="app/src/main/res/drawable/circle_6_yellow.xml" value="0.1375" />
         <entry key="app/src/main/res/drawable/control_point_10.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/control_point_12.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/control_point_8.xml" value="0.1" />

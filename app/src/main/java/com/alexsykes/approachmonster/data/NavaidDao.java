@@ -29,4 +29,7 @@ public interface NavaidDao {
 
     @Query("SELECT * FROM navaids WHERE navaidID = :id ORDER BY name")
     Navaid getMarkerById(int id);
+
+    @Query("SELECT * FROM navaids WHERE type = 'Waypoint' ORDER BY name")
+    List<Navaid> getAllWaypoints();
 }
