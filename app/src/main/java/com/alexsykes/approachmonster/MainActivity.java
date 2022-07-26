@@ -25,6 +25,7 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.List;
@@ -69,20 +70,29 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setMapToolbarEnabled(false);
         mMap.getUiSettings().setCompassEnabled(false);
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(@NonNull Marker marker) {
+                markerClicked(marker);
+                return false;
+            }
+        });
 
         boolean success = mMap.setMapStyle(new MapStyleOptions(getResources()
                 .getString(R.string.map_style)));
         if (!success) {
             Log.e(TAG, "Style parsing failed.");
         }
-//        mMap.addMarker(new MarkerOptions()
-//                .position(DEFAULT_LOCATION)
-//                .title("EGCC"));
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LOCATION, DEFAULT_ZOOM));
-        addNavaidsToMap(airfieldList, 0);
-        addNavaidsToMap(vorList, 1);
+        addNavaidsToMap(airfieldList, 1);
+        addNavaidsToMap(vorList, 2);
         addNavaidsToMap(vrpList, 2);
+    }
+
+    private void markerClicked(Marker marker) {
+
+        Log.i(TAG, "onMarkerClick: " + marker.getTag());
     }
 
     private void addNavaidsToMap(List<Navaid> navaids, int typeCode) {
@@ -91,33 +101,40 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         String marker_title, code, type;
+        BitmapDescriptor square = BitmapFromVector(getApplicationContext(), R.drawable.ic_square_12);
+        BitmapDescriptor star = BitmapFromVector(getApplicationContext(), R.drawable.ic_star_15);
+        BitmapDescriptor target = BitmapFromVector(getApplicationContext(), R.drawable.target_12);
         LatLng latLng;
 
 //        mMap.clear();
         for (Navaid navaid : navaids) {
             latLng = new LatLng(navaid.getLat(), navaid.getLng());
+
             MarkerOptions markerOptions = new MarkerOptions()
                     .position(latLng)
-                    .title(navaid.getCode())
                     .visible(true);
 
             switch(typeCode)  {
                 case 0 :
-                    markerOptions.icon(BitmapFromVector(getApplicationContext(), R.drawable.circle_6));
+                    // Airfield
+                    markerOptions.icon(star);
                     break;
                 case 1 :
-                    markerOptions.icon(BitmapFromVector(getApplicationContext(), R.drawable.target_12));
+                    // VOR
+                    markerOptions.icon(square);
                     break;
                 case 2 :
-                    markerOptions.icon(BitmapFromVector(getApplicationContext(), R.drawable.triangle_48));
+                    // VRP
+                    markerOptions.icon(target);
                     break;
                 default:
                     break;
             }
             markerOptions.draggable(false);
+
+            Marker marker = mMap.addMarker(markerOptions);
+            marker.setTag(navaid.getNavaid_id());
             mMap.addMarker(markerOptions);
-//            Marker marker1 = mMap.addMarker(markerOptions);
-//            marker1.setTag(marker.getMarker_id());
         }
         Log.i(TAG, "addNavaidsToMap: done");
     }
