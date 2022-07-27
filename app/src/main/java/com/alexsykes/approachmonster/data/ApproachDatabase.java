@@ -11,10 +11,11 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {Navaid.class}, version = 1, exportSchema = false)
+@Database(entities = {Navaid.class, Flight.class}, version = 1, exportSchema = false)
 
 public abstract class ApproachDatabase extends RoomDatabase {
     public abstract NavaidDao navaidDao();
+    public abstract FlightDao flightDao();
 
     private static volatile ApproachDatabase INSTANCE;
     private static final int NUMBER_OF_THREADS = 4;
@@ -45,8 +46,16 @@ public abstract class ApproachDatabase extends RoomDatabase {
 
             databaseWriteExecutor.execute(() -> {
                 NavaidDao navaidDao = INSTANCE.navaidDao();
+                FlightDao flightDao = INSTANCE.flightDao();
+                flightDao.deleteAllFlights();
                 navaidDao.deleteAllNavaids();
                 addData1();
+
+
+
+
+                Flight flight = new Flight("BA1135", 53.4, -2.35, 0, 0 , 0, "EGNM", "B737");
+                flightDao.insertFlight(flight);
 
                 Navaid navaid = new Navaid(1,"LFAC","Abbeville","Airfield",50.1437,1.83083);
                 navaidDao.insertNavaid(navaid);

@@ -14,9 +14,10 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.alexsykes.approachmonster.data.ApproachDatabase;
+import com.alexsykes.approachmonster.data.Flight;
+import com.alexsykes.approachmonster.data.FlightViewModel;
 import com.alexsykes.approachmonster.data.Navaid;
 import com.alexsykes.approachmonster.data.NavaidDao;
-import com.alexsykes.approachmonster.data.NavaidRepository;
 import com.alexsykes.approachmonster.data.NavaidViewModel;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -28,9 +29,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.List;
 
+
+// TODO implement layer visibility switches
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
     private GoogleMap mMap;
     private final LatLng DEFAULT_LOCATION = new LatLng(53.355437, -2.277298);
@@ -38,9 +42,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private final String TAG = "Info";
     private NavaidDao navaidDao;
     private NavaidViewModel navaidViewModel;
+    private FlightViewModel flightViewModel;
     List<Navaid> airfieldList, vrpList, vorList, waypointList;
 
     TextView infoBoxTitleTextView, navaidNameTextView, navaidDetailTextView, navaidTypeTextView;
+    SwitchMaterial airportSwitch, vorSwitch, waypointSwitch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +59,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         ApproachDatabase db = ApproachDatabase.getDatabase(this);
         navaidViewModel = new ViewModelProvider(this).get(NavaidViewModel.class);
-        navaidDao = db.navaidDao();
+        flightViewModel = new ViewModelProvider(this).get(FlightViewModel.class);
+//        navaidDao = db.navaidDao();
+
 
         airfieldList = navaidViewModel.getAllAirfields();
         vrpList = navaidViewModel.getAllVrps();
@@ -68,6 +76,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         navaidNameTextView =  findViewById(R.id.navaidNameTextView);
         navaidDetailTextView = findViewById(R.id.navaidDetailTextView);
         navaidTypeTextView = findViewById(R.id.navaidTypeTextView);
+
+        airportSwitch = findViewById(R.id.airportSwitch);
+        vorSwitch = findViewById(R.id.vorSwitch);
+        waypointSwitch = findViewById(R.id.waypointSwitch);
     }
 
     @Override
@@ -94,9 +106,39 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LOCATION, DEFAULT_ZOOM));
-        addNavaidsToMap(waypointList, 0);
+//        addNavaidsToMap(waypointList, 0);
         addNavaidsToMap(airfieldList, 1);
         addNavaidsToMap(vorList, 2);
+
+        addFlightsToMap();
+    }
+
+    private void addFlightsToMap() {
+        List<Flight> flightList = flightViewModel.getActiveFlights();
+        LatLng latLng;
+
+        for(Flight flight: flightList) {
+            latLng = new LatLng(flight.getLat(), flight.getLng());
+
+            BitmapDescriptor square = BitmapFromVector(getApplicationContext(), R.drawable.ic_square_12);
+            BitmapDescriptor line = BitmapFromVector(getApplicationContext(), R.drawable.ic_line_35);
+            BitmapDescriptor target = BitmapFromVector(getApplicationContext(), R.drawable.target_12);
+            MarkerOptions markerOptionsLine = new MarkerOptions()
+                    .position(latLng)
+                    .visible(true);
+            MarkerOptions markerOptionsSquare = new MarkerOptions()
+                    .position(latLng)
+                    .visible(true);
+
+            markerOptionsLine.icon(line);
+            markerOptionsLine.rotation(360);
+            markerOptionsLine.anchor(0.5f, 0.5f);
+            markerOptionsSquare.icon(target);
+            markerOptionsSquare.anchor(0.5f, 0.5f);
+//            Marker marker = mMap.addMarker(markerOptionsLine);
+            mMap.addMarker(markerOptionsLine);
+            mMap.addMarker(markerOptionsSquare);
+        }
     }
 
     private void markerClicked(Marker marker) {

@@ -24,7 +24,7 @@ public class NavaidRepository {
     void insertNavaid(Navaid navaid) {
         navaidDao.insertNavaid(navaid);
     }
-    List<Navaid> getAllAirfields() {
+    public List<Navaid> getAllAirfields() {
         return airfieldList;
     };
 
