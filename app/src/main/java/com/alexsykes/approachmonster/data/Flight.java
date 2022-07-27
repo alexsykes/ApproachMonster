@@ -1,17 +1,23 @@
 package com.alexsykes.approachmonster.data;
 
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.android.SphericalUtil;
+
 @Entity(tableName="flights")
 public class Flight {
     @PrimaryKey(autoGenerate = false)
     @NonNull
-    @ColumnInfo(name="flight")
+    @ColumnInfo
     private String flight_id;
 
     private double lat, lng;
@@ -34,6 +40,16 @@ public class Flight {
         this.type = type;
     }
 
+    public LatLng move(int timeLapse) {
+        LatLng current = new LatLng(lat, lng);
+        float displacement = (float) (velocity * 0.51444 * timeLapse * 10);
+        LatLng newLatLng = SphericalUtil.computeOffset(current,displacement, vector);
+
+
+        Log.i("Info", "move: " + newLatLng);
+
+        return newLatLng;
+    }
     @NonNull
     public String getFlight_id() {
         return flight_id;

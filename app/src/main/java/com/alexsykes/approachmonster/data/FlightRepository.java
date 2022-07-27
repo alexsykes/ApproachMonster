@@ -35,4 +35,8 @@ public class FlightRepository {
     public LiveData<List<Flight>> getPendingFlights() {
         return pendingFlights;
     }
+
+    public void updateFlightPosition(double lat, double lng, String flight_id) {
+        flightDao.updatePosition(lat, lng, flight_id);
+    }
 }

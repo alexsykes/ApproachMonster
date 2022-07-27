@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         this.mMap = mMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         mMap.setMinZoomPreference(5);
-        mMap.setMaxZoomPreference(12);
+        mMap.setMaxZoomPreference(18);
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setMapToolbarEnabled(false);
         mMap.getUiSettings().setCompassEnabled(false);
@@ -116,7 +116,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 //        addNavaidsToMap(waypointList, 0);
         addNavaidsToMap(airfieldList, 1);
         addNavaidsToMap(vorList, 2);
-
         addFlightsToMap();
     }
 
@@ -224,6 +223,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         public void run() {
             try{
                 //do your code here
+
+                List<Flight> flightList = flightViewModel.getActiveFlights();
+                for(Flight flight: flightList) {
+                    LatLng newPosition = flight.move(10);
+                    flightViewModel.updateFlightPosition(newPosition.latitude, newPosition.longitude, flight.getFlight_id());
+                }
+
                 Log.i(TAG, "run: ");
             }
             catch (Exception e) {
@@ -231,7 +237,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
             finally{
                 //also call the same runnable to call it at regular interval
-                handler.postDelayed(this, 5000);
+                handler.postDelayed(this, 10000);
             }
         }
     };

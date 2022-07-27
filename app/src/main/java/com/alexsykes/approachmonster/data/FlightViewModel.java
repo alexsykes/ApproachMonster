@@ -34,4 +34,8 @@ public class FlightViewModel extends AndroidViewModel {
     public List<Flight> getActiveFlights() {
         return activeFlights;
     }
+
+    public void updateFlightPosition(double lat, double lng, String flight_id) {
+        flightRepository.updateFlightPosition(lat, lng, flight_id);
+    }
 }

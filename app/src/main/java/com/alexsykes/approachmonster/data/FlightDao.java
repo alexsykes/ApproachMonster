@@ -16,6 +16,9 @@ public interface FlightDao {
     @Query("DELETE FROM flights")
     void deleteAllFlights();
 
+    @Query("UPDATE flights SET lat = :lat, lng = :lng WHERE flight_id = :flight_id")
+    void updatePosition(double lat, double lng, String flight_id);
+
     @Query("SELECT * FROM flights WHERE active")
     List<Flight> getActiveFlights();
 
