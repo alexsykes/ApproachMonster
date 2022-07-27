@@ -51,10 +51,11 @@ public abstract class ApproachDatabase extends RoomDatabase {
                 navaidDao.deleteAllNavaids();
                 addData1();
 
-
-
-
-                Flight flight = new Flight("BA1135", 53.4, -2.35, 0, 0 , 0, "EGNM", "B737");
+                Flight flight = new Flight("BA1135", 53.4, -2.35, 30, 300 , 400, "EGNM", "B737");
+                flightDao.insertFlight(flight);
+                flight = new Flight("EZ223", 53.402, -2.32145, 120, 128 , 270, "EGCC", "B787");
+                flightDao.insertFlight(flight);
+                flight = new Flight("SV123", 53.4902, -2.295, 20, 135 , 120, "EGCC", "B777");
                 flightDao.insertFlight(flight);
 
                 Navaid navaid = new Navaid(1,"LFAC","Abbeville","Airfield",50.1437,1.83083);

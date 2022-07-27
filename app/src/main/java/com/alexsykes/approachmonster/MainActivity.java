@@ -8,8 +8,10 @@ import androidx.lifecycle.ViewModelProvider;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -29,16 +31,21 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.material.switchmaterial.SwitchMaterial;
+import com.google.maps.android.SphericalUtil;
 
 import java.util.List;
 
 
 // TODO implement layer visibility switches
+// NOTE - 1 knot = 0.51444 metres / sec
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
     private GoogleMap mMap;
     private final LatLng DEFAULT_LOCATION = new LatLng(53.355437, -2.277298);
     private final int DEFAULT_ZOOM = 9;
+    final Handler handler = new Handler();
     private final String TAG = "Info";
     private NavaidDao navaidDao;
     private NavaidViewModel navaidViewModel;
@@ -60,8 +67,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         ApproachDatabase db = ApproachDatabase.getDatabase(this);
         navaidViewModel = new ViewModelProvider(this).get(NavaidViewModel.class);
         flightViewModel = new ViewModelProvider(this).get(FlightViewModel.class);
-//        navaidDao = db.navaidDao();
-
 
         airfieldList = navaidViewModel.getAllAirfields();
         vrpList = navaidViewModel.getAllVrps();
@@ -84,6 +89,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onMapReady(@NonNull GoogleMap mMap) {
+//runnable must be execute once
+        handler.post(runnable);
         this.mMap = mMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         mMap.setMinZoomPreference(5);
@@ -115,14 +122,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void addFlightsToMap() {
         List<Flight> flightList = flightViewModel.getActiveFlights();
-        LatLng latLng;
+        LatLng latLng, lineEnd;
 
         for(Flight flight: flightList) {
             latLng = new LatLng(flight.getLat(), flight.getLng());
+            lineEnd = SphericalUtil.computeOffset(latLng,flight.getVelocity() * 60 * 0.51444, flight.getVector());
 
-            BitmapDescriptor square = BitmapFromVector(getApplicationContext(), R.drawable.ic_square_12);
-            BitmapDescriptor line = BitmapFromVector(getApplicationContext(), R.drawable.ic_line_35);
-            BitmapDescriptor target = BitmapFromVector(getApplicationContext(), R.drawable.target_12);
+
+            BitmapDescriptor square = BitmapFromVector(getApplicationContext(), R.drawable.ic_baseline_square_24);
             MarkerOptions markerOptionsLine = new MarkerOptions()
                     .position(latLng)
                     .visible(true);
@@ -130,14 +137,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     .position(latLng)
                     .visible(true);
 
-            markerOptionsLine.icon(line);
-            markerOptionsLine.rotation(360);
-            markerOptionsLine.anchor(0.5f, 0.5f);
-            markerOptionsSquare.icon(target);
+            markerOptionsSquare.icon(square);
             markerOptionsSquare.anchor(0.5f, 0.5f);
-//            Marker marker = mMap.addMarker(markerOptionsLine);
-            mMap.addMarker(markerOptionsLine);
             mMap.addMarker(markerOptionsSquare);
+
+            mMap.addPolyline((new PolylineOptions()).add(latLng, lineEnd).
+                            width(3)
+                    .color(Color.WHITE)
+                    .geodesic(true));
         }
     }
 
@@ -209,4 +216,23 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         vectorDrawable.draw(canvas);
         return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
+
+
+    Runnable runnable = new Runnable() {
+
+        @Override
+        public void run() {
+            try{
+                //do your code here
+                Log.i(TAG, "run: ");
+            }
+            catch (Exception e) {
+                // TODO: handle exception
+            }
+            finally{
+                //also call the same runnable to call it at regular interval
+                handler.postDelayed(this, 5000);
+            }
+        }
+    };
 }
