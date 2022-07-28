@@ -10,7 +10,7 @@ import java.util.List;
 
 @Dao
 public interface FlightDao {
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertFlight(Flight flight);
 
     @Query("DELETE FROM flights")

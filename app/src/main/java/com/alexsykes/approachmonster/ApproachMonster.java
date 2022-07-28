@@ -10,7 +10,5 @@ public class ApproachMonster extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.i("Info", "onCreateLaunch: ");
-        Log.i("Info", "onCreateLaunch: done ");
     }
 }

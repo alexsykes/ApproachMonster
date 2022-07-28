@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.alexsykes.approachmonster.data.ApproachDatabase;
 import com.alexsykes.approachmonster.data.Flight;
+import com.alexsykes.approachmonster.data.FlightDao;
 import com.alexsykes.approachmonster.data.FlightViewModel;
 import com.alexsykes.approachmonster.data.Navaid;
 import com.alexsykes.approachmonster.data.NavaidDao;
@@ -31,25 +32,32 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.maps.android.SphericalUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
 // TODO implement layer visibility switches
 // NOTE - 1 knot = 0.51444 metres / sec
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMapLoadedCallback {
     private GoogleMap mMap;
     private final LatLng DEFAULT_LOCATION = new LatLng(53.355437, -2.277298);
     private final int DEFAULT_ZOOM = 9;
+    private final int UPDATE_PERIOD = 1000; // millis
     final Handler handler = new Handler();
     private final String TAG = "Info";
     private NavaidDao navaidDao;
+    private FlightDao flightDao;
     private NavaidViewModel navaidViewModel;
     private FlightViewModel flightViewModel;
     List<Navaid> airfieldList, vrpList, vorList, waypointList;
+    List<Flight> flightList;
+    ArrayList<Marker> currentMarkers;
+    ArrayList<Polyline> currentPolylines;
 
     TextView infoBoxTitleTextView, navaidNameTextView, navaidDetailTextView, navaidTypeTextView;
     SwitchMaterial airportSwitch, vorSwitch, waypointSwitch;
@@ -66,6 +74,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         ApproachDatabase db = ApproachDatabase.getDatabase(this);
         navaidViewModel = new ViewModelProvider(this).get(NavaidViewModel.class);
         flightViewModel = new ViewModelProvider(this).get(FlightViewModel.class);
+        flightDao = db.flightDao();
 
         airfieldList = navaidViewModel.getAllAirfields();
         vrpList = navaidViewModel.getAllVrps();
@@ -89,11 +98,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(@NonNull GoogleMap mMap) {
 //runnable must be execute once
-        handler.post(runnable);
+        Log.i(TAG, "onMapReady: ");
         this.mMap = mMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         mMap.setMinZoomPreference(5);
         mMap.setMaxZoomPreference(18);
+        mMap.setOnMapLoadedCallback(this);
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setMapToolbarEnabled(false);
         mMap.getUiSettings().setCompassEnabled(false);
@@ -113,39 +123,59 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LOCATION, DEFAULT_ZOOM));
 //        addNavaidsToMap(waypointList, 0);
+    }
+
+    @Override
+    public void onMapLoaded() {
+        Log.i(TAG, "onMapLoaded: ");
         addNavaidsToMap(airfieldList, 1);
         addNavaidsToMap(vorList, 2);
         addFlightsToMap();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.i(TAG, "waited:  UPDATE_PERIOD");
+                handler.post(runnable);
+            }
+        }, UPDATE_PERIOD);
     }
 
     private void addFlightsToMap() {
-        List<Flight> flightList = flightViewModel.getActiveFlightList();
-        LatLng latLng, lineEnd;
+        currentMarkers = new ArrayList<Marker>();
+        currentPolylines = new ArrayList<Polyline>();
+        flightList = flightViewModel.getActiveFlightList();
+        LatLng currentPosition, lineEnd;
+        BitmapDescriptor square = BitmapFromVector(getApplicationContext(), R.drawable.ic_baseline_square_24);
 
+        // Using existing flightList
         for(Flight flight: flightList) {
-            latLng = new LatLng(flight.getLat(), flight.getLng());
-            lineEnd = SphericalUtil.computeOffset(latLng,flight.getVelocity() * 60 * 0.51444, flight.getVector());
+//            Calculate current position and vector
+            currentPosition = new LatLng(flight.getLat(), flight.getLng());
 
-
-            BitmapDescriptor square = BitmapFromVector(getApplicationContext(), R.drawable.ic_baseline_square_24);
+            // Vector shows distance per minute on current track
+            double distance = flight.getVelocity() * 60 * 0.51444;
+            lineEnd = SphericalUtil.computeOffset(currentPosition, distance, flight.getVector());
             MarkerOptions markerOptionsLine = new MarkerOptions()
-                    .position(latLng)
+                    .position(currentPosition)
                     .visible(true);
             MarkerOptions markerOptionsSquare = new MarkerOptions()
-                    .position(latLng)
+                    .position(currentPosition)
                     .visible(true);
 
             markerOptionsSquare.icon(square);
             markerOptionsSquare.anchor(0.5f, 0.5f);
-            mMap.addMarker(markerOptionsSquare);
+            Marker currentMarker = mMap.addMarker(markerOptionsSquare);
 
-            mMap.addPolyline((new PolylineOptions()).add(latLng, lineEnd).
+           Polyline polyline = mMap.addPolyline((new PolylineOptions()).add(currentPosition, lineEnd).
                             width(3)
                     .color(Color.WHITE)
                     .geodesic(true));
 
-            Log.i(TAG, "addFlightsToMap: " + latLng);
+           currentPolylines.add(polyline);
+            currentMarkers.add(currentMarker);
+//            Log.i(TAG, "addFlightsToMap: " + latLng);
         }
+        Log.i(TAG, "flights added: ");
     }
 
     private void markerClicked(Marker marker) {
@@ -217,7 +247,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
 
-
     Runnable runnable = new Runnable() {
 
         @Override
@@ -225,20 +254,49 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             try{
                 //do your code here
 
-                List<Flight> activeFlightList = flightViewModel.getActiveFlightList();
-                for(Flight flight: activeFlightList) {
-                    LatLng newPosition = flight.move(10);
-                    flightViewModel.updateFlightPosition(newPosition.latitude, newPosition.longitude, flight.getFlight_id());
+                flightList = flightViewModel.getActiveFlightList();
+                for(Marker marker: currentMarkers) {
+                    marker.remove();
                 }
-//                addFlightsToMap();
-                Log.i(TAG, "run: ");
+                for(Polyline polyline : currentPolylines) {
+                    polyline.remove();
+                }
+
+                BitmapDescriptor square = BitmapFromVector(getApplicationContext(), R.drawable.ic_baseline_square_24);
+                for (Flight flight: flightList) {
+                    LatLng currentPosition = new LatLng(flight.getLat(), flight.getLng());
+                     flight.move(UPDATE_PERIOD);
+                     currentPosition = new LatLng(flight.getLat(), flight.getLng());
+
+                    // Vector shows distance per minute on current track
+                    double distance = flight.getVelocity() * 60 * 0.51444;
+                    LatLng lineEnd = SphericalUtil.computeOffset(currentPosition, distance, flight.getVector());
+                    MarkerOptions markerOptionsLine = new MarkerOptions()
+                            .position(currentPosition)
+                            .visible(true);
+                    MarkerOptions markerOptionsSquare = new MarkerOptions()
+                            .position(currentPosition)
+                            .visible(true);
+
+                    markerOptionsSquare.icon(square);
+                    markerOptionsSquare.anchor(0.5f, 0.5f);
+                    Marker currentMarker = mMap.addMarker(markerOptionsSquare);
+
+                    Polyline polyline = mMap.addPolyline((new PolylineOptions()).add(currentPosition, lineEnd).
+                            width(3)
+                            .color(Color.WHITE)
+                            .geodesic(true));
+
+                    currentPolylines.add(polyline);
+                    currentMarkers.add(currentMarker);
+                }
             }
             catch (Exception e) {
                 // TODO: handle exception
             }
             finally{
                 //also call the same runnable to call it at regular interval
-                handler.postDelayed(this, 10000);
+                handler.postDelayed(this, UPDATE_PERIOD);
             }
         }
     };

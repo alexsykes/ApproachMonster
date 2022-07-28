@@ -40,15 +40,14 @@ public class Flight {
         this.type = type;
     }
 
-    public LatLng move(int timeLapse) {
+    public void move(int timeLapse) {
         LatLng current = new LatLng(lat, lng);
-        float displacement = (float) (velocity * 0.51444 * timeLapse * 10);
+        float displacement = (float) (velocity * (0.51444 * timeLapse /1000));
         LatLng newLatLng = SphericalUtil.computeOffset(current,displacement, vector);
+        this.setLat(newLatLng.latitude);
+        this.setLng(newLatLng.longitude);
 
-
-        Log.i("Info", "move: " + newLatLng);
-
-        return newLatLng;
+        return;
     }
     @NonNull
     public String getFlight_id() {
