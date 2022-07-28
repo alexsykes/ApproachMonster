@@ -8,7 +8,7 @@ import java.util.List;
 
 public class FlightRepository {
     private FlightDao flightDao;
-    private List<Flight> activeFlights;
+    private List<Flight> activeFlightList;
     private LiveData<List<Flight>> pendingFlights;
     private LiveData<List<Flight>> expiredFlights;
 
@@ -17,15 +17,16 @@ public class FlightRepository {
 
         flightDao = db.flightDao();
 
-        activeFlights = flightDao.getActiveFlights();
+        activeFlightList = flightDao.getActiveFlightList();
         pendingFlights = flightDao.getPendingFlights();
         expiredFlights = flightDao.getExpiredFlights();
     }
 
+
     void insertFlight(Flight flight){ flightDao.insertFlight(flight); }
 
-    public List<Flight> getActiveFlights() {
-        return activeFlights;
+    public List<Flight> getActiveFlightList() {
+        return flightDao.getActiveFlightList();
     }
 
     public LiveData<List<Flight>> getExpiredFlights() {

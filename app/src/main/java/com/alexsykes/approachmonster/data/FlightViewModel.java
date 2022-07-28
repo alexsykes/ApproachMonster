@@ -11,14 +11,14 @@ import java.util.List;
 public class FlightViewModel extends AndroidViewModel {
     private FlightRepository flightRepository;
     private final LiveData<List<Flight>>  pendingFlights, expiredFlights;
-    private final List<Flight> activeFlights;
+    private final List<Flight> activeFlightList;
 
 
     public FlightViewModel(@NonNull Application application) {
         super(application);
 
         flightRepository = new FlightRepository(application);
-        activeFlights = flightRepository.getActiveFlights();
+        activeFlightList = flightRepository.getActiveFlightList();
         pendingFlights = flightRepository.getPendingFlights();
         expiredFlights = flightRepository.getExpiredFlights();
     }
@@ -31,8 +31,8 @@ public class FlightViewModel extends AndroidViewModel {
         return expiredFlights;
     }
 
-    public List<Flight> getActiveFlights() {
-        return activeFlights;
+    public List<Flight> getActiveFlightList() {
+        return activeFlightList;
     }
 
     public void updateFlightPosition(double lat, double lng, String flight_id) {

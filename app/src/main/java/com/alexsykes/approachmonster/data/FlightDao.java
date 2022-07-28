@@ -20,7 +20,7 @@ public interface FlightDao {
     void updatePosition(double lat, double lng, String flight_id);
 
     @Query("SELECT * FROM flights WHERE active")
-    List<Flight> getActiveFlights();
+    List<Flight> getActiveFlightList();
 
     @Query("SELECT * FROM flights WHERE NOT active AND NOT expired")
     LiveData<List<Flight>> getPendingFlights();

@@ -31,7 +31,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.maps.android.SphericalUtil;
@@ -120,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void addFlightsToMap() {
-        List<Flight> flightList = flightViewModel.getActiveFlights();
+        List<Flight> flightList = flightViewModel.getActiveFlightList();
         LatLng latLng, lineEnd;
 
         for(Flight flight: flightList) {
@@ -144,6 +143,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             width(3)
                     .color(Color.WHITE)
                     .geodesic(true));
+
+            Log.i(TAG, "addFlightsToMap: " + latLng);
         }
     }
 
@@ -224,12 +225,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             try{
                 //do your code here
 
-                List<Flight> flightList = flightViewModel.getActiveFlights();
-                for(Flight flight: flightList) {
+                List<Flight> activeFlightList = flightViewModel.getActiveFlightList();
+                for(Flight flight: activeFlightList) {
                     LatLng newPosition = flight.move(10);
                     flightViewModel.updateFlightPosition(newPosition.latitude, newPosition.longitude, flight.getFlight_id());
                 }
-
+//                addFlightsToMap();
                 Log.i(TAG, "run: ");
             }
             catch (Exception e) {
