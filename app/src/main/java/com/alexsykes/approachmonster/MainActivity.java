@@ -13,6 +13,8 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.alexsykes.approachmonster.data.ApproachDatabase;
@@ -36,6 +38,7 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.maps.android.SphericalUtil;
+import com.google.maps.android.collections.MarkerManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +61,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     List<Flight> flightList;
     ArrayList<Marker> currentMarkers;
     ArrayList<Polyline> currentPolylines;
+    MarkerManager markerManager;
+    MarkerManager.Collection airportMarkers, vorMarkers, waypointMarkers;
 
     TextView infoBoxTitleTextView, navaidNameTextView, navaidDetailTextView, navaidTypeTextView;
     SwitchMaterial airportSwitch, vorSwitch, waypointSwitch;
@@ -93,6 +98,18 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         airportSwitch = findViewById(R.id.airportSwitch);
         vorSwitch = findViewById(R.id.vorSwitch);
         waypointSwitch = findViewById(R.id.waypointSwitch);
+
+
+        vorSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if( isChecked) {
+                    vorMarkers.showAll();
+                } else {
+                    vorMarkers.hideAll();
+                }
+            }
+        });
     }
 
     @Override
@@ -100,6 +117,27 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 //runnable must be execute once
         Log.i(TAG, "onMapReady: ");
         this.mMap = mMap;
+//        markerManager = new MarkerManager(mMap);
+//        airportMarkers = markerManager.newCollection();
+//        waypointMarkers = markerManager.newCollection();
+//        vorMarkers = markerManager.newCollection();
+
+//        vorMarkers.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+//            @Override
+//            public boolean onMarkerClick(@NonNull Marker marker) {
+//                markerClicked(marker);
+//                return false;
+//            }
+//        });
+//
+//        waypointMarkers.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+//            @Override
+//            public boolean onMarkerClick(@NonNull Marker marker) {
+//                markerClicked(marker);
+//                return false;
+//            }
+//        });
+
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         mMap.setMinZoomPreference(5);
         mMap.setMaxZoomPreference(18);
@@ -122,7 +160,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(DEFAULT_LOCATION, DEFAULT_ZOOM));
-//        addNavaidsToMap(waypointList, 0);
     }
 
     @Override
@@ -131,6 +168,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         addNavaidsToMap(airfieldList, 1);
         addNavaidsToMap(vorList, 2);
         addFlightsToMap();
+
+        // Start updates following initial delay
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -155,9 +194,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             // Vector shows distance per minute on current track
             double distance = flight.getVelocity() * 60 * 0.51444;
             lineEnd = SphericalUtil.computeOffset(currentPosition, distance, flight.getVector());
-            MarkerOptions markerOptionsLine = new MarkerOptions()
-                    .position(currentPosition)
-                    .visible(true);
             MarkerOptions markerOptionsSquare = new MarkerOptions()
                     .position(currentPosition)
                     .visible(true);
@@ -166,12 +202,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             markerOptionsSquare.anchor(0.5f, 0.5f);
             Marker currentMarker = mMap.addMarker(markerOptionsSquare);
 
-           Polyline polyline = mMap.addPolyline((new PolylineOptions()).add(currentPosition, lineEnd).
-                            width(3)
+            Polyline polyline = mMap.addPolyline((new PolylineOptions()).add(currentPosition, lineEnd).
+                    width(3)
                     .color(Color.WHITE)
                     .geodesic(true));
 
-           currentPolylines.add(polyline);
+            currentPolylines.add(polyline);
             currentMarkers.add(currentMarker);
 //            Log.i(TAG, "addFlightsToMap: " + latLng);
         }
@@ -232,6 +268,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             Marker marker = mMap.addMarker(markerOptions);
             marker.setTag(navaid.getNavaid_id());
             mMap.addMarker(markerOptions);
+//            vorMarkers.addMarker(markerOptions);
         }
         Log.i(TAG, "addNavaidsToMap: done");
     }
@@ -252,9 +289,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         @Override
         public void run() {
             try{
-                //do your code here
-
+//              Get current flight list
                 flightList = flightViewModel.getActiveFlightList();
+
+//              Delete current markers and lines from the map
                 for(Marker marker: currentMarkers) {
                     marker.remove();
                 }
@@ -262,18 +300,23 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     polyline.remove();
                 }
 
+//              Set up icon
                 BitmapDescriptor square = BitmapFromVector(getApplicationContext(), R.drawable.ic_baseline_square_24);
                 for (Flight flight: flightList) {
-                    LatLng currentPosition = new LatLng(flight.getLat(), flight.getLng());
-                     flight.move(UPDATE_PERIOD);
-                     currentPosition = new LatLng(flight.getLat(), flight.getLng());
+//                  Get current position, then update
 
+                    LatLng currentPosition = new LatLng(flight.getLat(), flight.getLng());
+                    flight.move(UPDATE_PERIOD);
+                    currentPosition = new LatLng(flight.getLat(), flight.getLng());
+
+                    // ? Update database
+
+                    flightDao.updatePosition(currentPosition.latitude, currentPosition.longitude, flight.getFlight_id());
                     // Vector shows distance per minute on current track
+                    // Calculate projected minute dustance then add
                     double distance = flight.getVelocity() * 60 * 0.51444;
                     LatLng lineEnd = SphericalUtil.computeOffset(currentPosition, distance, flight.getVector());
-                    MarkerOptions markerOptionsLine = new MarkerOptions()
-                            .position(currentPosition)
-                            .visible(true);
+
                     MarkerOptions markerOptionsSquare = new MarkerOptions()
                             .position(currentPosition)
                             .visible(true);
@@ -282,11 +325,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     markerOptionsSquare.anchor(0.5f, 0.5f);
                     Marker currentMarker = mMap.addMarker(markerOptionsSquare);
 
-                    Polyline polyline = mMap.addPolyline((new PolylineOptions()).add(currentPosition, lineEnd).
-                            width(3)
+                    Polyline polyline = mMap.addPolyline((new PolylineOptions()).add(currentPosition, lineEnd)
+                            .width(3)
                             .color(Color.WHITE)
                             .geodesic(true));
 
+                    // Add to ListArrays
                     currentPolylines.add(polyline);
                     currentMarkers.add(currentMarker);
                 }

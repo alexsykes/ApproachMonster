@@ -46,7 +46,6 @@ public class Flight {
         LatLng newLatLng = SphericalUtil.computeOffset(current,displacement, vector);
         this.setLat(newLatLng.latitude);
         this.setLng(newLatLng.longitude);
-
         return;
     }
     @NonNull
