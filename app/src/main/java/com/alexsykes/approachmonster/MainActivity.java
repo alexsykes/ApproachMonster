@@ -6,12 +6,14 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.CompoundButton;
 import android.widget.TextView;
@@ -56,12 +58,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private FlightDao flightDao;
     private NavaidViewModel navaidViewModel;
     private FlightViewModel flightViewModel;
+    private boolean airfieldsVisible, waypointsVisible, vorsVisible;
     List<Navaid> airfieldList, vrpList, vorList, waypointList;
     List<Flight> flightList;
     ArrayList<Marker> currentMarkers;
     ArrayList<Polyline> currentPolylines;
     MarkerManager markerManager;
     MarkerManager.Collection airfieldMarkerCollection, vorMarkerCollection, waypointMarkerCollection;
+
+    SharedPreferences prefs;
+    SharedPreferences.Editor editor;
 
     TextView infoBoxTitleTextView, navaidNameTextView, navaidDetailTextView, navaidTypeTextView;
     SwitchMaterial airfieldSwitch, vorSwitch, waypointSwitch;
@@ -70,6 +76,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        editor = prefs.edit();
+        airfieldsVisible = prefs.getBoolean("airfieldsVisible", true);
+        waypointsVisible = prefs.getBoolean("waypointsVisible", true);
+        vorsVisible = prefs.getBoolean("vorsVisible", true);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         assert mapFragment != null;
@@ -97,38 +108,47 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         airfieldSwitch = findViewById(R.id.airportSwitch);
         vorSwitch = findViewById(R.id.vorSwitch);
         waypointSwitch = findViewById(R.id.waypointSwitch);
-
+        airfieldSwitch.setChecked(airfieldsVisible);
+        waypointSwitch.setChecked(waypointsVisible);
+        vorSwitch.setChecked(vorsVisible);
 
         vorSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if( isChecked) {
                     vorMarkerCollection.showAll();
+                    editor.putBoolean("vorsVisible", true);
                 } else {
                     vorMarkerCollection.hideAll();
+                    editor.putBoolean("vorsVisible", false);
                 }
+                editor.apply();
             }
         });
-
         waypointSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if( isChecked) {
                     waypointMarkerCollection.showAll();
+                    editor.putBoolean("waypointsVisible", true);
                 } else {
                     waypointMarkerCollection.hideAll();
+                    editor.putBoolean("waypointsVisible", false);
                 }
+                editor.apply();
             }
         });
-
         airfieldSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if( isChecked) {
                     airfieldMarkerCollection.showAll();
+                    editor.putBoolean("airfieldsVisible", true);
                 } else {
                     airfieldMarkerCollection.hideAll();
+                    editor.putBoolean("airfieldsVisible", false);
                 }
+                editor.apply();
             }
         });
     }
@@ -150,6 +170,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setMapToolbarEnabled(false);
         mMap.getUiSettings().setCompassEnabled(false);
+        mMap.getUiSettings().setZoomGesturesEnabled(false);
+        mMap.getUiSettings().setCompassEnabled(true);
 //        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
 //            @Override
 //            public boolean onMarkerClick(@NonNull Marker marker) {
@@ -180,6 +202,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             public boolean onMarkerClick(@NonNull Marker marker) {
                 Log.i(TAG, "vorMarkers.onMarkerClick: ");
                 markerClicked(marker);
+                marker.showInfoWindow();
                 return false;
             }
         });
@@ -275,6 +298,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     .position(latLng)
                     .icon(target)
                     .visible(true)
+                    .title(navaid.getCode())
                     .draggable(false);
 
 //            Marker marker = mMap.addMarker(markerOptions);
