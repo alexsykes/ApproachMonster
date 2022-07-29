@@ -268,7 +268,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void markerClicked(Marker marker) {
-        Log.i(TAG, "onMarkerClick: " + marker.getId());
+        Log.i(TAG, "markerClicked.onMarkerClick: " + marker.getId());
         if(marker.getTag()!=null) {
             int markerId = (int) marker.getTag();
             Navaid navaid = navaidViewModel.getNavaidById(markerId);
