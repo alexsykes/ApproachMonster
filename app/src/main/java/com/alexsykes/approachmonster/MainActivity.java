@@ -84,11 +84,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         vrpList = navaidViewModel.getAllVrps();
         vorList = navaidViewModel.getAllVors();
         waypointList = navaidViewModel.getAllWaypoints();
-
-
-        MarkerManager markerManager = new MarkerManager(mMap);
-
-
+//        markerManager = new MarkerManager(mMap);
         setupUi();
     }
 
@@ -147,16 +143,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         waypointMarkerCollection = markerManager.newCollection();
         vorMarkerCollection = markerManager.newCollection();
 
-
-
-        waypointMarkerCollection.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(@NonNull Marker marker) {
-                markerClicked(marker);
-                return false;
-            }
-        });
-
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         mMap.setMinZoomPreference(5);
         mMap.setMaxZoomPreference(18);
@@ -164,13 +150,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setMapToolbarEnabled(false);
         mMap.getUiSettings().setCompassEnabled(false);
-        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(@NonNull Marker marker) {
-                markerClicked(marker);
-                return false;
-            }
-        });
+//        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+//            @Override
+//            public boolean onMarkerClick(@NonNull Marker marker) {
+//                markerClicked(marker);
+//                return false;
+//            }
+//        });
 
         boolean success = mMap.setMapStyle(new MapStyleOptions(getResources()
                 .getString(R.string.map_style)));
@@ -291,8 +277,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     .visible(true)
                     .draggable(false);
 
-            Marker marker = mMap.addMarker(markerOptions);
-            marker.setTag(navaid.getNavaid_id());
+//            Marker marker = mMap.addMarker(markerOptions);
+//            marker.setTag(navaid.getNavaid_id());
             vorMarkerCollection.addMarker(markerOptions);
         }
         Log.i(TAG, "addNavaidsToMap: done");
@@ -317,8 +303,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     .visible(true)
                     .draggable(false);
 
-            Marker marker = mMap.addMarker(markerOptions);
-            marker.setTag(navaid.getNavaid_id());
+//            Marker marker = mMap.addMarker(markerOptions);
+//            marker.setTag(navaid.getNavaid_id());
             airfieldMarkerCollection.addMarker(markerOptions);
 
         }
@@ -344,9 +330,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     .visible(true)
                     .draggable(false);
 
-            Marker marker = mMap.addMarker(markerOptions);
-            marker.setTag(navaid.getNavaid_id());
-            airfieldMarkerCollection.addMarker(markerOptions);
+//            Marker marker = mMap.addMarker(markerOptions);
+//            marker.setTag(navaid.getNavaid_id());
+            waypointMarkerCollection.addMarker(markerOptions);
         }
         Log.i(TAG, "addWaypointsToMap: done");
     }
