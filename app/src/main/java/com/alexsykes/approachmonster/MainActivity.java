@@ -13,7 +13,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
@@ -62,10 +61,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     ArrayList<Marker> currentMarkers;
     ArrayList<Polyline> currentPolylines;
     MarkerManager markerManager;
-    MarkerManager.Collection airportMarkers, vorMarkers, waypointMarkers;
+    MarkerManager.Collection airfieldMarkerCollection, vorMarkerCollection, waypointMarkerCollection;
 
     TextView infoBoxTitleTextView, navaidNameTextView, navaidDetailTextView, navaidTypeTextView;
-    SwitchMaterial airportSwitch, vorSwitch, waypointSwitch;
+    SwitchMaterial airfieldSwitch, vorSwitch, waypointSwitch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +85,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         vorList = navaidViewModel.getAllVors();
         waypointList = navaidViewModel.getAllWaypoints();
 
+
+        MarkerManager markerManager = new MarkerManager(mMap);
+
+
         setupUi();
     }
 
@@ -95,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         navaidDetailTextView = findViewById(R.id.navaidDetailTextView);
         navaidTypeTextView = findViewById(R.id.navaidTypeTextView);
 
-        airportSwitch = findViewById(R.id.airportSwitch);
+        airfieldSwitch = findViewById(R.id.airportSwitch);
         vorSwitch = findViewById(R.id.vorSwitch);
         waypointSwitch = findViewById(R.id.waypointSwitch);
 
@@ -104,9 +107,31 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if( isChecked) {
-                    vorMarkers.showAll();
+                    vorMarkerCollection.showAll();
                 } else {
-                    vorMarkers.hideAll();
+                    vorMarkerCollection.hideAll();
+                }
+            }
+        });
+
+        waypointSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if( isChecked) {
+                    waypointMarkerCollection.showAll();
+                } else {
+                    waypointMarkerCollection.hideAll();
+                }
+            }
+        });
+
+        airfieldSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if( isChecked) {
+                    airfieldMarkerCollection.showAll();
+                } else {
+                    airfieldMarkerCollection.hideAll();
                 }
             }
         });
@@ -117,26 +142,20 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 //runnable must be execute once
         Log.i(TAG, "onMapReady: ");
         this.mMap = mMap;
-//        markerManager = new MarkerManager(mMap);
-//        airportMarkers = markerManager.newCollection();
-//        waypointMarkers = markerManager.newCollection();
-//        vorMarkers = markerManager.newCollection();
+        markerManager = new MarkerManager(mMap);
+        airfieldMarkerCollection = markerManager.newCollection();
+        waypointMarkerCollection = markerManager.newCollection();
+        vorMarkerCollection = markerManager.newCollection();
 
-//        vorMarkers.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-//            @Override
-//            public boolean onMarkerClick(@NonNull Marker marker) {
-//                markerClicked(marker);
-//                return false;
-//            }
-//        });
-//
-//        waypointMarkers.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-//            @Override
-//            public boolean onMarkerClick(@NonNull Marker marker) {
-//                markerClicked(marker);
-//                return false;
-//            }
-//        });
+
+
+        waypointMarkerCollection.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(@NonNull Marker marker) {
+                markerClicked(marker);
+                return false;
+            }
+        });
 
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         mMap.setMinZoomPreference(5);
@@ -165,10 +184,35 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapLoaded() {
         Log.i(TAG, "onMapLoaded: ");
-        addNavaidsToMap(airfieldList, 1);
+//        addNavaidsToMap(airfieldList, 1);
         addNavaidsToMap(vorList, 2);
+        addAirfieldsToMap(airfieldList);
+        addWaypointsToMap(waypointList);
         addFlightsToMap();
-
+        vorMarkerCollection.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(@NonNull Marker marker) {
+                Log.i(TAG, "vorMarkers.onMarkerClick: ");
+                markerClicked(marker);
+                return false;
+            }
+        });
+        airfieldMarkerCollection.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(@NonNull Marker marker) {
+                Log.i(TAG, "airfieldMarkers.onMarkerClick: ");
+                markerClicked(marker);
+                return false;
+            }
+        });
+        waypointMarkerCollection.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(@NonNull Marker marker) {
+                Log.i(TAG, "waypointMarkers.onMarkerClick: ");
+                markerClicked(marker);
+                return false;
+            }
+        });
         // Start updates following initial delay
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -215,7 +259,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void markerClicked(Marker marker) {
-        Log.i(TAG, "onMarkerClick: " + marker.getTag());
+        Log.i(TAG, "onMarkerClick: " + marker.getId());
         if(marker.getTag()!=null) {
             int markerId = (int) marker.getTag();
             Navaid navaid = navaidViewModel.getNavaidById(markerId);
@@ -234,8 +278,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         String marker_title, code, type;
-        BitmapDescriptor square = BitmapFromVector(getApplicationContext(), R.drawable.ic_square_12);
-        BitmapDescriptor star = BitmapFromVector(getApplicationContext(), R.drawable.ic_star_15);
         BitmapDescriptor target = BitmapFromVector(getApplicationContext(), R.drawable.target_12);
         LatLng latLng;
 
@@ -245,32 +287,68 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             MarkerOptions markerOptions = new MarkerOptions()
                     .position(latLng)
-                    .visible(true);
-
-            switch(typeCode)  {
-                case 0 :
-                    // VRP
-                    markerOptions.icon(star);
-                    break;
-                case 1 :
-                    // Airfield
-                    markerOptions.icon(square);
-                    break;
-                case 2 :
-                    // VOR
-                    markerOptions.icon(target);
-                    break;
-                default:
-                    break;
-            }
-            markerOptions.draggable(false);
+                    .icon(target)
+                    .visible(true)
+                    .draggable(false);
 
             Marker marker = mMap.addMarker(markerOptions);
             marker.setTag(navaid.getNavaid_id());
-            mMap.addMarker(markerOptions);
-//            vorMarkers.addMarker(markerOptions);
+            vorMarkerCollection.addMarker(markerOptions);
         }
         Log.i(TAG, "addNavaidsToMap: done");
+    }
+
+    private void addAirfieldsToMap(List<Navaid> navaids) {
+        if (navaids.size() == 0) {
+            return;
+        }
+
+        String marker_title, code, type;
+        BitmapDescriptor square = BitmapFromVector(getApplicationContext(), R.drawable.ic_square_12);
+        LatLng latLng;
+
+//        mMap.clear();
+        for (Navaid navaid : navaids) {
+            latLng = new LatLng(navaid.getLat(), navaid.getLng());
+
+            MarkerOptions markerOptions = new MarkerOptions()
+                    .position(latLng)
+                    .icon(square)
+                    .visible(true)
+                    .draggable(false);
+
+            Marker marker = mMap.addMarker(markerOptions);
+            marker.setTag(navaid.getNavaid_id());
+            airfieldMarkerCollection.addMarker(markerOptions);
+
+        }
+        Log.i(TAG, "addAirfieldsToMap: done");
+    }
+
+    private void addWaypointsToMap(List<Navaid> navaids) {
+        if (navaids.size() == 0) {
+            return;
+        }
+
+        String marker_title, code, type;
+        BitmapDescriptor square = BitmapFromVector(getApplicationContext(), R.drawable.ic_star_15);
+        LatLng latLng;
+
+//        mMap.clear();
+        for (Navaid navaid : navaids) {
+            latLng = new LatLng(navaid.getLat(), navaid.getLng());
+
+            MarkerOptions markerOptions = new MarkerOptions()
+                    .position(latLng)
+                    .icon(square)
+                    .visible(true)
+                    .draggable(false);
+
+            Marker marker = mMap.addMarker(markerOptions);
+            marker.setTag(navaid.getNavaid_id());
+            airfieldMarkerCollection.addMarker(markerOptions);
+        }
+        Log.i(TAG, "addWaypointsToMap: done");
     }
 
     private BitmapDescriptor BitmapFromVector(Context context, int vectorResId) {
