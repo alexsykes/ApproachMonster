@@ -18,7 +18,7 @@
         tools:context=".activities.MapsActivity" />
 
     <LinearLayout
-        android:id="@+id/linearLayout"
+        android:id="@+id/infoBoxLinearLayout"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/standard_margin"
@@ -66,7 +66,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:background="@color/dark"
-        app:layout_constraintEnd_toStartOf="@+id/linearLayout"
+        app:layout_constraintEnd_toStartOf="@+id/infoBoxLinearLayout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
