@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     ArrayList<Marker> currentMarkers;
     ArrayList<Polyline> currentPolylines;
     MarkerManager markerManager;
-    MarkerManager.Collection airfieldMarkerCollection, vorMarkerCollection, waypointMarkerCollection;
+    MarkerManager.Collection airfieldMarkerCollection, vorMarkerCollection, waypointMarkerCollection, flightMarkerCollection;
 
     SharedPreferences prefs;
     SharedPreferences.Editor editor;
@@ -172,6 +172,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         airfieldMarkerCollection = markerManager.newCollection();
         waypointMarkerCollection = markerManager.newCollection();
         vorMarkerCollection = markerManager.newCollection();
+        flightMarkerCollection = markerManager.newCollection();
 
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         mMap.setMinZoomPreference(5);
@@ -230,6 +231,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 return false;
             }
         });
+        flightMarkerCollection.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(@NonNull Marker marker) {
+                Log.i(TAG, "flightMarkers.onMarkerClick: ");
+                markerClicked(marker);
+                return false;
+            }
+        });
         // Start updates following initial delay
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -273,7 +282,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             markerOptionsSquare.icon(square);
             markerOptionsSquare.anchor(0.5f, 0.5f);
-            Marker currentMarker = mMap.addMarker(markerOptionsSquare);
+//            Marker currentMarker = mMap.addMarker(markerOptionsSquare);
+            Marker currentMarker = flightMarkerCollection.addMarker(markerOptionsSquare);
+//            mMap.addMarker(markerOptionsSquare);
             currentMarker.setTag(flight.getFlight_id());
 
             Polyline polyline = mMap.addPolyline((new PolylineOptions()).add(currentPosition, lineEnd).
