@@ -68,11 +68,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     MarkerManager markerManager;
     MarkerManager.Collection airfieldMarkerCollection, vorMarkerCollection, waypointMarkerCollection, currentFlightCollection;
 
+    int currentAlt, currentVector, currentVelocity;
+
     SharedPreferences prefs;
     SharedPreferences.Editor editor;
 
-    LinearLayout infoBoxLinearLayout;
+    LinearLayout infoBoxLinearLayout, flightInfoBoxLayout;
     TextView infoBoxTitleTextView, navaidNameTextView, navaidDetailTextView, navaidTypeTextView;
+    TextView  identTextView,  incAltTextView,  altTextView,  decAltTextView ;
+    TextView  vectorTextView,  incVectorTextView,  decVectorTextView ;
+    TextView  speedTextView, incSpeedTextView,  decSpeedTextView ;
     SwitchMaterial airfieldSwitch, vorSwitch, waypointSwitch;
 
     @Override
@@ -114,6 +119,22 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         navaidDetailTextView = findViewById(R.id.navaidDetailTextView);
         navaidTypeTextView = findViewById(R.id.navaidTypeTextView);
         infoBoxLinearLayout.setVisibility(View.GONE);
+
+        flightInfoBoxLayout = findViewById(R.id.flightInfoBox);
+        flightInfoBoxLayout.setVisibility(View.GONE);
+
+        identTextView  = findViewById(R.id.identTextView);
+        incAltTextView  = findViewById(R.id.incAltTextView);
+        altTextView   = findViewById(R.id.altTextView);
+        decAltTextView  = findViewById(R.id.decAltTextView);
+
+
+        vectorTextView  = findViewById(R.id.vectorTextView);
+        incVectorTextView  = findViewById(R.id.incVectorTextView);
+        decVectorTextView  = findViewById(R.id.decVectorTextView);
+        speedTextView    = findViewById(R.id.speedTextView);
+        incSpeedTextView = findViewById(R.id.incSpeedTextView);
+        decSpeedTextView   = findViewById(R.id.decSpeedTextView);
 
         airfieldSwitch = findViewById(R.id.airportSwitch);
         vorSwitch = findViewById(R.id.vorSwitch);
@@ -237,7 +258,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public boolean onMarkerClick(@NonNull Marker marker) {
                 Log.i(TAG, "currentFlightCollection.onMarkerClick: ");
-                markerClicked(marker);
+                flightMarkerClicked(marker);
                 return false;
             }
         });
@@ -250,6 +271,94 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 //            }
 //        }, UPDATE_PERIOD);
         handler.post(flightProgressTimer);
+    }
+
+    private void flightMarkerClicked(Marker marker) {
+        flightInfoBoxLayout.setVisibility(View.VISIBLE);
+        String flight_id = marker.getTitle();
+        identTextView.setText(flight_id);
+        Flight flight = flightDao.getFlight(flight_id);
+
+        currentAlt = flight.getAltitude();
+        currentVector = flight.getVector();
+        currentVelocity = flight.getVelocity();
+
+        vectorTextView.setText(String.valueOf(flight.getVector()+ "°"));
+        speedTextView.setText(String.valueOf(flight.getVelocity() + "Kts"));
+        altTextView.setText("FL: "+ currentAlt);
+
+        incAltTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                currentAlt++;
+                altTextView.setText("FL: "+String.valueOf(currentAlt));
+                updateFlight();
+            }
+        });
+
+        decAltTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (currentAlt > 0) {
+                    currentAlt--;
+                }
+                altTextView.setText("FL: "+String.valueOf(currentAlt));
+                updateFlight();
+            }
+        });
+
+        incVectorTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(currentVector < 360) {
+                    currentVector++;
+                } else {
+                    currentVector = 1;
+                }
+                vectorTextView.setText(String.valueOf(currentVector) + "°");
+                updateFlight();
+            }
+        });
+
+        decVectorTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (currentVector > 1) {
+                    currentVector--;
+                } else {
+                    currentVector = 360;
+                }
+                vectorTextView.setText(String.valueOf(currentVector) + "°");
+                updateFlight();
+            }
+        });
+
+        incSpeedTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(currentVelocity < 360) {
+                    currentVelocity = currentVelocity + 5;
+                }
+                speedTextView.setText(currentVelocity + "Kts");
+                updateFlight();
+            }
+        });
+
+        decSpeedTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (currentVelocity > 5) {
+                    currentVelocity = currentVelocity - 5;
+                }
+                speedTextView.setText(currentVelocity + "Kts");
+                updateFlight();
+            }
+        });
+
+
+    }
+
+    private void updateFlight() {
     }
 
     private void markerClicked(Marker marker) {
@@ -427,9 +536,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 //              Clear display
                 currentFlightCollection.clear();
 //              Delete current markers and lines from the map
-                    for (Polyline polyline : currentPolylines) {
-                        polyline.remove();
-                    }
+                for (Polyline polyline : currentPolylines) {
+                    polyline.remove();
+                }
 //                }
 
 //              Define icon

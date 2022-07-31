@@ -28,4 +28,7 @@ public interface FlightDao {
 
     @Query("SELECT * FROM flights WHERE NOT active AND expired")
     LiveData<List<Flight>> getExpiredFlights();
+
+    @Query("SELECT * FROM flights WHERE flight_id = :flight_id")
+    Flight getFlight(String flight_id);
 }

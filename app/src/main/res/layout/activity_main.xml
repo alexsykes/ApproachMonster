@@ -131,7 +131,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/identTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/purple_700"
@@ -148,7 +148,7 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/decAlcTextView"
+                android:id="@+id/decAltTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/small_margin"
@@ -171,7 +171,7 @@
                 android:textColor="@color/purple_700" />
 
             <TextView
-                android:id="@+id/incAltView"
+                android:id="@+id/incAltTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/small_margin"
@@ -214,6 +214,48 @@
 
             <TextView
                 android:id="@+id/incVectorTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/small_margin"
+                android:layout_weight="1"
+                android:padding="@dimen/small_margin"
+                android:text="@string/plus"
+                android:textAlignment="viewEnd"
+                android:textColor="@color/purple_700"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/speedLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/decSpeedTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/small_margin"
+                android:layout_weight="1"
+                android:padding="@dimen/small_margin"
+                android:text="@string/minus"
+                android:textAlignment="viewStart"
+                android:textColor="@color/purple_700"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/speedTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="@dimen/small_margin"
+                android:text="@string/speed"
+                android:layout_margin="@dimen/small_margin"
+                android:textColor="@color/purple_700"
+                android:textAlignment="center" />
+
+            <TextView
+                android:id="@+id/incSpeedTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/small_margin"
