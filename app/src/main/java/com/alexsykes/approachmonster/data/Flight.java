@@ -22,6 +22,32 @@ public class Flight {
 
     private double lat, lng;
     private int altitude, vector, velocity;
+    private int targetAltitude, targetVector, targetVelocity;
+
+    public int getTargetAltitude() {
+        return targetAltitude;
+    }
+
+    public void setTargetAltitude(int targetAltitude) {
+        this.targetAltitude = targetAltitude;
+    }
+
+    public int getTargetVector() {
+        return targetVector;
+    }
+
+    public void setTargetVector(int targetVector) {
+        this.targetVector = targetVector;
+    }
+
+    public int getTargetVelocity() {
+        return targetVelocity;
+    }
+
+    public void setTargetVelocity(int targetVelocity) {
+        this.targetVelocity = targetVelocity;
+    }
+
     private String destination;
 
     private String type;
