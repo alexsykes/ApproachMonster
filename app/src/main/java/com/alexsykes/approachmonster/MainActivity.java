@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     ArrayList<Marker> currentMarkers;
     ArrayList<Polyline> currentPolylines;
     MarkerManager markerManager;
-    MarkerManager.Collection airfieldMarkerCollection, vorMarkerCollection, waypointMarkerCollection;
+    MarkerManager.Collection airfieldMarkerCollection, vorMarkerCollection, waypointMarkerCollection, currentFlightCollection;
 
     SharedPreferences prefs;
     SharedPreferences.Editor editor;
@@ -172,6 +172,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         airfieldMarkerCollection = markerManager.newCollection();
         waypointMarkerCollection = markerManager.newCollection();
         vorMarkerCollection = markerManager.newCollection();
+        currentFlightCollection = markerManager.newCollection();
 
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         mMap.setMinZoomPreference(5);
@@ -204,7 +205,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         addNavaidsToMap(vorList, 2);
         addAirfieldsToMap(airfieldList);
         addWaypointsToMap(waypointList);
-        addFlightsToMap();
+//        addFlightsToMap();
         vorMarkerCollection.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(@NonNull Marker marker) {
@@ -230,14 +231,23 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 return false;
             }
         });
-        // Start updates following initial delay
-        new Handler().postDelayed(new Runnable() {
+        currentFlightCollection.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
-            public void run() {
-                Log.i(TAG, "waited:  UPDATE_PERIOD");
-                handler.post(flightProgressTimer);
+            public boolean onMarkerClick(@NonNull Marker marker) {
+                Log.i(TAG, "currentFlightCollection.onMarkerClick: ");
+                markerClicked(marker);
+                return false;
             }
-        }, UPDATE_PERIOD);
+        });
+        // Start updates following initial delay
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                Log.i(TAG, "waited:  UPDATE_PERIOD");
+//                handler.post(flightProgressTimer);
+//            }
+//        }, UPDATE_PERIOD);
+        handler.post(flightProgressTimer);
     }
 
     private void markerClicked(Marker marker) {
@@ -253,8 +263,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void addFlightsToMap() {
         currentMarkers = new ArrayList<Marker>();
-        currentPolylines = new ArrayList<Polyline>();
+//        currentPolylines = new ArrayList<Polyline>();
+//        currentFlightCollection.clear();
+
+        // Get current flight list
         flightList = flightViewModel.getActiveFlightList();
+
+        // Set up current position and icon
         LatLng currentPosition, lineEnd;
         BitmapDescriptor square = BitmapFromVector(getApplicationContext(), R.drawable.ic_baseline_square_24);
 
@@ -273,16 +288,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             markerOptionsSquare.icon(square);
             markerOptionsSquare.anchor(0.5f, 0.5f);
-            Marker currentMarker = mMap.addMarker(markerOptionsSquare);
-            currentMarker.setTag(flight.getFlight_id());
+//            Marker currentMarker = currentFlightCollection.addMarker(markerOptionsSquare);
+//            currentMarker.setTag(flight.getFlight_id());
 
             Polyline polyline = mMap.addPolyline((new PolylineOptions()).add(currentPosition, lineEnd).
                     width(3)
                     .color(Color.WHITE)
                     .geodesic(true));
-
-            currentPolylines.add(polyline);
-            currentMarkers.add(currentMarker);
+            currentFlightCollection.addMarker(markerOptionsSquare);
+//            currentPolylines.add(polyline);
+//            currentMarkers.add(currentMarker);
 //            Log.i(TAG, "addFlightsToMap: " + latLng);
         }
         Log.i(TAG, "flights added: ");
@@ -409,12 +424,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 flightList = flightViewModel.getActiveFlightList();
 
 //              Delete current markers and lines from the map
-                for(Marker marker: currentMarkers) {
-                    marker.remove();
-                }
-                for(Polyline polyline : currentPolylines) {
-                    polyline.remove();
-                }
+//                for(Marker marker: currentMarkers) {
+//                    marker.remove();
+//                }
+//                for(Polyline polyline : currentPolylines) {
+//                    polyline.remove();
+//                }
 
 //              Set up icon
                 BitmapDescriptor square = BitmapFromVector(getApplicationContext(), R.drawable.ic_baseline_square_24);
@@ -425,6 +440,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     flight.move(UPDATE_PERIOD);
                     currentPosition = new LatLng(flight.getLat(), flight.getLng());
 
+                    if(flight.getFlight_id().equals("SV113"))
+                    {
+                        Log.i(TAG, "run: " + flight.getLat());
+                    }
                     // ? Update database
 
                     flightDao.updatePosition(currentPosition.latitude, currentPosition.longitude, flight.getFlight_id());
@@ -439,7 +458,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                     markerOptionsSquare.icon(square);
                     markerOptionsSquare.anchor(0.5f, 0.5f);
-                    Marker currentMarker = mMap.addMarker(markerOptionsSquare);
+                    Marker currentMarker = currentFlightCollection.addMarker(markerOptionsSquare);
 
                     Polyline polyline = mMap.addPolyline((new PolylineOptions()).add(currentPosition, lineEnd)
                             .width(3)
@@ -447,8 +466,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             .geodesic(true));
 
                     // Add to ListArrays
-                    currentPolylines.add(polyline);
-                    currentMarkers.add(currentMarker);
+//                    currentPolylines.add(polyline);
+//                    currentMarkers.add(currentMarker);
                 }
             }
             catch (Exception e) {
@@ -456,6 +475,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
             finally{
                 //also call the same runnable to call it at regular interval
+
+                Log.i(TAG, "run: finally ");
                 handler.postDelayed(this, UPDATE_PERIOD);
             }
         }
