@@ -7,4 +7,9 @@
     <string name="airports">Airports</string>
     <string name="waypoints">Waypoints</string>
     <string name="vor">VOR</string>
+    <string name="plus">+</string>
+    <string name="ident">Ident</string>
+    <string name="altitude">Altitude</string>
+    <string name="minus">-</string>
+    <string name="direction">Direction</string>
 </resources>

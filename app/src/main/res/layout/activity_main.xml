@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
 
+    android:layout_height="match_parent"
     tools:context=".MainActivity">
 
     <androidx.fragment.app.FragmentContainerView
@@ -25,6 +25,7 @@
         android:background="@color/white"
         android:elevation="@dimen/standard_margin"
         android:orientation="vertical"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -62,10 +63,10 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/topBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="@color/dark"
         app:layout_constraintEnd_toStartOf="@+id/infoBoxLinearLayout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -79,38 +80,149 @@
             android:id="@+id/airportSwitch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:checked="true"
-            android:padding="@dimen/small_margin"
-            android:background="@color/dark"
-            android:textColor="@color/white"
             android:layout_weight="0"
-            android:text="@string/airports" />
+            android:background="@color/purple_700"
+            android:checked="true"
+            android:elevation="@dimen/standard_margin"
+            android:padding="@dimen/small_margin"
+            android:paddingStart="@dimen/standard_margin"
+            android:text="@string/airports"
+            android:textColor="@color/white" />
 
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/waypointSwitch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:checked="false"
-            android:padding="@dimen/small_margin"
-            android:background="@color/dark"
-            android:textColor="@color/white"
             android:layout_weight="0"
-            android:text="@string/waypoints" />
+            android:background="@color/purple_700"
+            android:checked="false"
+            android:elevation="@dimen/standard_margin"
+            android:padding="@dimen/small_margin"
+            android:text="@string/waypoints"
+            android:textColor="@color/white" />
 
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/vorSwitch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:checked="false"
-            android:padding="@dimen/small_margin"
-            android:background="@color/dark"
-            android:textColor="@color/white"
             android:layout_weight="0"
-            android:text="@string/vor" />
+            android:background="@color/purple_700"
+            android:checked="false"
+            android:elevation="@dimen/standard_margin"
+            android:padding="@dimen/small_margin"
+            android:text="@string/vor"
+            android:textColor="@color/white" />
 
         <Space
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/flightInfoBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/standard_margin"
+        android:background="@color/white"
+        android:elevation="@dimen/standard_margin"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/purple_700"
+            android:padding="@dimen/small_margin"
+            android:text="@string/ident"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:id="@+id/altLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/decAlcTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/small_margin"
+                android:layout_weight="1"
+                android:padding="@dimen/small_margin"
+                android:text="@string/minus"
+                android:textAlignment="viewStart"
+                android:textColor="@color/purple_700"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/altTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="@dimen/small_margin"
+                android:text="@string/altitude"
+                android:textAlignment="center"
+                android:layout_margin="@dimen/small_margin"
+                android:textColor="@color/purple_700" />
+
+            <TextView
+                android:id="@+id/incAltView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/small_margin"
+                android:layout_weight="1"
+                android:padding="@dimen/small_margin"
+                android:text="@string/plus"
+                android:textAlignment="viewEnd"
+                android:textColor="@color/purple_700"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/vectorLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/decVectorTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/small_margin"
+                android:layout_weight="1"
+                android:padding="@dimen/small_margin"
+                android:text="@string/minus"
+                android:textAlignment="viewStart"
+                android:textColor="@color/purple_700"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/vectorTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="@dimen/small_margin"
+                android:text="@string/direction"
+                android:layout_margin="@dimen/small_margin"
+                android:textColor="@color/purple_700"
+                android:textAlignment="center" />
+
+            <TextView
+                android:id="@+id/incVectorTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/small_margin"
+                android:layout_weight="1"
+                android:padding="@dimen/small_margin"
+                android:text="@string/plus"
+                android:textAlignment="viewEnd"
+                android:textColor="@color/purple_700"
+                android:textStyle="bold" />
+        </LinearLayout>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

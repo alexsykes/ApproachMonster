@@ -206,6 +206,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         addAirfieldsToMap(airfieldList);
         addWaypointsToMap(waypointList);
 //        addFlightsToMap();
+
+        currentPolylines = new ArrayList<Polyline>();
         vorMarkerCollection.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(@NonNull Marker marker) {
@@ -422,30 +424,22 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             try{
 //              Get current flight list
                 flightList = flightViewModel.getActiveFlightList();
-
+//              Clear display
+                currentFlightCollection.clear();
 //              Delete current markers and lines from the map
-//                for(Marker marker: currentMarkers) {
-//                    marker.remove();
-//                }
-//                for(Polyline polyline : currentPolylines) {
-//                    polyline.remove();
+                    for (Polyline polyline : currentPolylines) {
+                        polyline.remove();
+                    }
 //                }
 
-//              Set up icon
+//              Define icon
                 BitmapDescriptor square = BitmapFromVector(getApplicationContext(), R.drawable.ic_baseline_square_24);
                 for (Flight flight: flightList) {
 //                  Get current position, then update
-
                     LatLng currentPosition = new LatLng(flight.getLat(), flight.getLng());
+
+                    //  Update database
                     flight.move(UPDATE_PERIOD);
-                    currentPosition = new LatLng(flight.getLat(), flight.getLng());
-
-                    if(flight.getFlight_id().equals("SV113"))
-                    {
-                        Log.i(TAG, "run: " + flight.getLat());
-                    }
-                    // ? Update database
-
                     flightDao.updatePosition(currentPosition.latitude, currentPosition.longitude, flight.getFlight_id());
                     // Vector shows distance per minute on current track
                     // Calculate projected minute dustance then add
@@ -454,6 +448,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                     MarkerOptions markerOptionsSquare = new MarkerOptions()
                             .position(currentPosition)
+                            .title(flight.getFlight_id())
                             .visible(true);
 
                     markerOptionsSquare.icon(square);
@@ -466,8 +461,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             .geodesic(true));
 
                     // Add to ListArrays
-//                    currentPolylines.add(polyline);
-//                    currentMarkers.add(currentMarker);
+                    currentPolylines.add(polyline);
                 }
             }
             catch (Exception e) {
@@ -475,8 +469,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
             finally{
                 //also call the same runnable to call it at regular interval
-
-                Log.i(TAG, "run: finally ");
                 handler.postDelayed(this, UPDATE_PERIOD);
             }
         }
