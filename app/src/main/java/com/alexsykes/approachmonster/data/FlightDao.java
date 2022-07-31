@@ -31,4 +31,7 @@ public interface FlightDao {
 
     @Query("SELECT * FROM flights WHERE flight_id = :flight_id")
     Flight getFlight(String flight_id);
+
+    @Query("UPDATE flights SET altitude = :currentAlt, vector = :currentVector, velocity = :currentVelocity WHERE flight_id = :flight_id")
+    void updateFlight(String flight_id, int currentAlt, int currentVector, int currentVelocity);
 }

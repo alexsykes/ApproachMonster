@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     MarkerManager.Collection airfieldMarkerCollection, vorMarkerCollection, waypointMarkerCollection, currentFlightCollection;
 
     int currentAlt, currentVector, currentVelocity;
+    String flight_id;
 
     SharedPreferences prefs;
     SharedPreferences.Editor editor;
@@ -275,7 +276,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void flightMarkerClicked(Marker marker) {
         flightInfoBoxLayout.setVisibility(View.VISIBLE);
-        String flight_id = marker.getTitle();
+        flight_id = marker.getTitle();
         identTextView.setText(flight_id);
         Flight flight = flightDao.getFlight(flight_id);
 
@@ -336,7 +337,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         incSpeedTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(currentVelocity < 360) {
+                if(currentVelocity < 500) {
                     currentVelocity = currentVelocity + 5;
                 }
                 speedTextView.setText(currentVelocity + "Kts");
@@ -354,11 +355,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 updateFlight();
             }
         });
-
-
     }
 
     private void updateFlight() {
+        flightDao.updateFlight(flight_id, currentAlt, currentVector, currentVelocity);
     }
 
     private void markerClicked(Marker marker) {
@@ -371,48 +371,48 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             navaidTypeTextView.setText(navaid.getType());
         }
     }
-
-    private void addFlightsToMap() {
-        currentMarkers = new ArrayList<Marker>();
-//        currentPolylines = new ArrayList<Polyline>();
-//        currentFlightCollection.clear();
-
-        // Get current flight list
-        flightList = flightViewModel.getActiveFlightList();
-
-        // Set up current position and icon
-        LatLng currentPosition, lineEnd;
-        BitmapDescriptor square = BitmapFromVector(getApplicationContext(), R.drawable.ic_baseline_square_24);
-
-        // Using existing flightList
-        for(Flight flight: flightList) {
-//            Calculate current position and vector
-            currentPosition = new LatLng(flight.getLat(), flight.getLng());
-
-            // Vector shows distance per minute on current track
-            double distance = flight.getVelocity() * 60 * 0.51444;
-            lineEnd = SphericalUtil.computeOffset(currentPosition, distance, flight.getVector());
-            MarkerOptions markerOptionsSquare = new MarkerOptions()
-                    .position(currentPosition)
-                    .title(flight.getFlight_id())
-                    .visible(true);
-
-            markerOptionsSquare.icon(square);
-            markerOptionsSquare.anchor(0.5f, 0.5f);
-//            Marker currentMarker = currentFlightCollection.addMarker(markerOptionsSquare);
-//            currentMarker.setTag(flight.getFlight_id());
-
-            Polyline polyline = mMap.addPolyline((new PolylineOptions()).add(currentPosition, lineEnd).
-                    width(3)
-                    .color(Color.WHITE)
-                    .geodesic(true));
-            currentFlightCollection.addMarker(markerOptionsSquare);
-//            currentPolylines.add(polyline);
-//            currentMarkers.add(currentMarker);
-//            Log.i(TAG, "addFlightsToMap: " + latLng);
-        }
-        Log.i(TAG, "flights added: ");
-    }
+//
+//    private void addFlightsToMap() {
+//        currentMarkers = new ArrayList<Marker>();
+////        currentPolylines = new ArrayList<Polyline>();
+////        currentFlightCollection.clear();
+//
+//        // Get current flight list
+//        flightList = flightDao.getActiveFlightList();
+//
+//        // Set up current position and icon
+//        LatLng currentPosition, lineEnd;
+//        BitmapDescriptor square = BitmapFromVector(getApplicationContext(), R.drawable.ic_baseline_square_24);
+//
+//        // Using existing flightList
+//        for(Flight flight: flightList) {
+////            Calculate current position and vector
+//            currentPosition = new LatLng(flight.getLat(), flight.getLng());
+//
+//            // Vector shows distance per minute on current track
+//            double distance = flight.getVelocity() * 60 * 0.51444;
+//            lineEnd = SphericalUtil.computeOffset(currentPosition, distance, flight.getVector());
+//            MarkerOptions markerOptionsSquare = new MarkerOptions()
+//                    .position(currentPosition)
+//                    .title(flight.getFlight_id())
+//                    .visible(true);
+//
+//            markerOptionsSquare.icon(square);
+//            markerOptionsSquare.anchor(0.5f, 0.5f);
+////            Marker currentMarker = currentFlightCollection.addMarker(markerOptionsSquare);
+////            currentMarker.setTag(flight.getFlight_id());
+//
+//            Polyline polyline = mMap.addPolyline((new PolylineOptions()).add(currentPosition, lineEnd).
+//                    width(3)
+//                    .color(Color.WHITE)
+//                    .geodesic(true));
+//            currentFlightCollection.addMarker(markerOptionsSquare);
+////            currentPolylines.add(polyline);
+////            currentMarkers.add(currentMarker);
+////            Log.i(TAG, "addFlightsToMap: " + latLng);
+//        }
+//        Log.i(TAG, "flights added: ");
+//    }
 
     private void addNavaidsToMap(List<Navaid> navaids, int typeCode) {
         if (navaids.size() == 0) {
@@ -433,8 +433,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     .visible(true)
                     .title(navaid.getCode())
                     .draggable(false);
-//            Marker marker = mMap.addMarker(markerOptions);
-//            marker.setTag(navaid.getNavaid_id());
             Marker marker = vorMarkerCollection.addMarker(markerOptions);
             marker.setTag(navaid.getNavaid_id());
         }
@@ -532,7 +530,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         public void run() {
             try{
 //              Get current flight list
-                flightList = flightViewModel.getActiveFlightList();
+//                flightList = flightViewModel.getActiveFlightList();
+                flightList = flightDao.getActiveFlightList();
 //              Clear display
                 currentFlightCollection.clear();
 //              Delete current markers and lines from the map
@@ -549,7 +548,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                     //  Update database
                     flight.move(UPDATE_PERIOD);
-                    flightDao.updatePosition(currentPosition.latitude, currentPosition.longitude, flight.getFlight_id());
+                    flightDao.updatePosition(flight.getLat(), flight.getLng(), flight.getFlight_id());
                     // Vector shows distance per minute on current track
                     // Calculate projected minute dustance then add
                     double distance = flight.getVelocity() * 60 * 0.51444;
