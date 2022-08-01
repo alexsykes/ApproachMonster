@@ -18,51 +18,6 @@
         tools:context=".activities.MapsActivity" />
 
     <LinearLayout
-        android:id="@+id/infoBoxLinearLayout"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/standard_margin"
-        android:background="@color/white"
-        android:elevation="@dimen/standard_margin"
-        android:orientation="vertical"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <TextView
-            android:id="@+id/infoBoxTitleTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/black"
-            android:padding="@dimen/standard_margin"
-            android:text="@string/info"
-            android:textColor="@color/white"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/navaidNameTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/small_margin"
-            android:textColor="@color/purple_700" />
-
-        <TextView
-            android:id="@+id/navaidTypeTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/small_margin"
-            android:textColor="@color/purple_700" />
-
-        <TextView
-            android:id="@+id/navaidDetailTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/small_margin"
-            android:textColor="@color/purple_700"
-            android:visibility="gone" />
-    </LinearLayout>
-
-    <LinearLayout
         android:id="@+id/topBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -120,6 +75,51 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/infoBoxLinearLayout"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/standard_margin"
+        android:background="@color/white"
+        android:elevation="@dimen/standard_margin"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/infoBoxTitleTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/black"
+            android:padding="@dimen/standard_margin"
+            android:text="@string/info"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/navaidNameTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/small_margin"
+            android:textColor="@color/purple_700" />
+
+        <TextView
+            android:id="@+id/navaidTypeTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/small_margin"
+            android:textColor="@color/purple_700" />
+
+        <TextView
+            android:id="@+id/navaidDetailTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/small_margin"
+            android:textColor="@color/purple_700"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/flightInfoBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -135,11 +135,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/purple_700"
-            android:padding="@dimen/small_margin"
+            android:paddingTop="@dimen/small_margin"
+            android:paddingBottom="@dimen/small_margin"
             android:text="@string/ident"
             android:textAlignment="center"
             android:textColor="@color/white"
             android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/flight_level"
+            android:textAlignment="center"
+            android:textColor="@color/purple_700" />
 
         <LinearLayout
             android:id="@+id/altLayout"
@@ -159,16 +168,16 @@
                 android:textColor="@color/purple_700"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/altTextView"
-                android:layout_width="wrap_content"
+            <EditText
+                android:id="@+id/altEditText"
+                android:layout_width="50dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:padding="@dimen/small_margin"
-                android:text="@string/altitude"
-                android:textAlignment="center"
-                android:layout_margin="@dimen/small_margin"
-                android:textColor="@color/purple_700" />
+                android:autofillHints="Altitude"
+                android:hint="@string/altitude"
+                android:inputType="number"
+                android:textAlignment="textEnd"
+                android:textColor="@color/purple_700"
+                tools:ignore="TouchTargetSizeCheck,TextContrastCheck,DuplicateSpeakableTextCheck" />
 
             <TextView
                 android:id="@+id/incAltTextView"
@@ -182,6 +191,14 @@
                 android:textColor="@color/purple_700"
                 android:textStyle="bold" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/direction"
+            android:textAlignment="center"
+            android:textColor="@color/purple_700" />
 
         <LinearLayout
             android:id="@+id/vectorLayout"
@@ -201,16 +218,16 @@
                 android:textColor="@color/purple_700"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/vectorTextView"
-                android:layout_width="wrap_content"
+            <EditText
+                android:id="@+id/vectorEditText"
+                android:layout_width="50dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:padding="@dimen/small_margin"
-                android:text="@string/direction"
-                android:layout_margin="@dimen/small_margin"
+                android:autofillHints="Vector"
+                android:hint="@string/direction"
+                android:inputType="number"
+                android:textAlignment="textEnd"
                 android:textColor="@color/purple_700"
-                android:textAlignment="center" />
+                tools:ignore="TouchTargetSizeCheck,DuplicateSpeakableTextCheck,TextContrastCheck" />
 
             <TextView
                 android:id="@+id/incVectorTextView"
@@ -224,6 +241,14 @@
                 android:textColor="@color/purple_700"
                 android:textStyle="bold" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/speed"
+            android:textAlignment="center"
+            android:textColor="@color/purple_700" />
 
         <LinearLayout
             android:id="@+id/speedLayout"
@@ -243,16 +268,17 @@
                 android:textColor="@color/purple_700"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/speedTextView"
-                android:layout_width="wrap_content"
+
+            <EditText
+                android:id="@+id/speedEditText"
+                android:layout_width="50dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:padding="@dimen/small_margin"
-                android:text="@string/speed"
-                android:layout_margin="@dimen/small_margin"
+                android:autofillHints="Speed"
+                android:hint="@string/speed"
+                android:inputType="number"
+                android:textAlignment="textEnd"
                 android:textColor="@color/purple_700"
-                android:textAlignment="center" />
+                tools:ignore="TouchTargetSizeCheck,TextContrastCheck,DuplicateSpeakableTextCheck" />
 
             <TextView
                 android:id="@+id/incSpeedTextView"

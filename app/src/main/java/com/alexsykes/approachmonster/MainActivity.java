@@ -14,9 +14,12 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.text.Editable;
+import android.text.Spannable;
 import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -69,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     MarkerManager.Collection airfieldMarkerCollection, vorMarkerCollection, waypointMarkerCollection, currentFlightCollection;
 
     int currentAlt, currentVector, currentVelocity;
+    int targetAlt, targetVector, targetVelocity;
     String flight_id;
 
     SharedPreferences prefs;
@@ -76,9 +80,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     LinearLayout infoBoxLinearLayout, flightInfoBoxLayout;
     TextView infoBoxTitleTextView, navaidNameTextView, navaidDetailTextView, navaidTypeTextView;
-    TextView  identTextView,  incAltTextView,  altTextView,  decAltTextView ;
-    TextView  vectorTextView,  incVectorTextView,  decVectorTextView ;
-    TextView  speedTextView, incSpeedTextView,  decSpeedTextView ;
+    TextView  identTextView,  incAltTextView,  decAltTextView ;
+    TextView    incVectorTextView,  decVectorTextView ;
+    TextView   incSpeedTextView,  decSpeedTextView ;
+    EditText speedEdit, vectorEdit, altEdit;
     SwitchMaterial airfieldSwitch, vorSwitch, waypointSwitch;
 
     @Override
@@ -126,14 +131,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         identTextView  = findViewById(R.id.identTextView);
         incAltTextView  = findViewById(R.id.incAltTextView);
-        altTextView   = findViewById(R.id.altTextView);
+        altEdit   = findViewById(R.id.altEditText);
         decAltTextView  = findViewById(R.id.decAltTextView);
 
 
-        vectorTextView  = findViewById(R.id.vectorTextView);
+        vectorEdit  = findViewById(R.id.vectorEditText);
         incVectorTextView  = findViewById(R.id.incVectorTextView);
         decVectorTextView  = findViewById(R.id.decVectorTextView);
-        speedTextView    = findViewById(R.id.speedTextView);
+        speedEdit    = findViewById(R.id.speedEditText);
         incSpeedTextView = findViewById(R.id.incSpeedTextView);
         decSpeedTextView   = findViewById(R.id.decSpeedTextView);
 
@@ -284,15 +289,30 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         currentVector = flight.getVector();
         currentVelocity = flight.getVelocity();
 
-        vectorTextView.setText(String.valueOf(flight.getVector()+ "°"));
-        speedTextView.setText(String.valueOf(flight.getVelocity() + "Kts"));
-        altTextView.setText("FL: "+ currentAlt);
+        targetAlt = flight.getTargetAltitude();
+        targetVector = flight.getTargetVector();
+        targetVelocity = flight.getTargetVelocity();
+
+        vectorEdit.setText(String.valueOf(targetVector));
+        speedEdit.setText(String.valueOf(targetVelocity));
+        altEdit.setText(String.valueOf(targetAlt));
+
+        vectorEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(!hasFocus) {
+                    targetVector = Integer.valueOf(vectorEdit.getText().toString());
+
+                    updateFlight();
+                }
+            }
+        });
 
         incAltTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                currentAlt++;
-                altTextView.setText("FL: "+String.valueOf(currentAlt));
+                targetAlt++;
+                altEdit.setText(String.valueOf(targetAlt));
                 updateFlight();
             }
         });
@@ -300,10 +320,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         decAltTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (currentAlt > 0) {
-                    currentAlt--;
+                if (targetAlt > 0) {
+                    targetAlt--;
                 }
-                altTextView.setText("FL: "+String.valueOf(currentAlt));
+                altEdit.setText(String.valueOf(targetAlt));
                 updateFlight();
             }
         });
@@ -311,12 +331,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         incVectorTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(currentVector < 360) {
-                    currentVector++;
+                if(targetVector < 360) {
+                    targetVector++;
                 } else {
-                    currentVector = 1;
+                    targetVector = 1;
                 }
-                vectorTextView.setText(String.valueOf(currentVector) + "°");
+                vectorEdit.setText(String.valueOf(targetVector));
                 updateFlight();
             }
         });
@@ -324,12 +344,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         decVectorTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (currentVector > 1) {
-                    currentVector--;
+                if (targetVector > 1) {
+                    targetVector--;
                 } else {
-                    currentVector = 360;
+                    targetVector = 360;
                 }
-                vectorTextView.setText(String.valueOf(currentVector) + "°");
+                vectorEdit.setText(String.valueOf(targetVector));
                 updateFlight();
             }
         });
@@ -337,10 +357,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         incSpeedTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(currentVelocity < 500) {
-                    currentVelocity = currentVelocity + 5;
+                if(targetVelocity < 500) {
+                    targetVelocity = targetVelocity + 5;
                 }
-                speedTextView.setText(currentVelocity + "Kts");
+                speedEdit.setText(String.valueOf(targetVelocity));
                 updateFlight();
             }
         });
@@ -348,17 +368,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         decSpeedTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (currentVelocity > 5) {
-                    currentVelocity = currentVelocity - 5;
+                if (targetVelocity > 5) {
+                    targetVelocity = targetVelocity - 5;
                 }
-                speedTextView.setText(currentVelocity + "Kts");
+                speedEdit.setText(String.valueOf(targetVelocity));
                 updateFlight();
             }
         });
     }
 
     private void updateFlight() {
-        flightDao.updateFlight(flight_id, currentAlt, currentVector, currentVelocity);
+        flightDao.updateFlight(flight_id, targetAlt, targetVector, targetVelocity);
     }
 
     private void markerClicked(Marker marker) {

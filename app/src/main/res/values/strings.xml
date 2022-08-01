@@ -10,7 +10,8 @@
     <string name="plus">+</string>
     <string name="ident">Ident</string>
     <string name="altitude">Altitude</string>
+    <string name="flight_level">Flight Level</string>
     <string name="minus">-</string>
-    <string name="direction">Direction</string>
-    <string name="speed">Speed</string>
+    <string name="direction">Direction °</string>
+    <string name="speed">Speed - Kts</string>
 </resources>
