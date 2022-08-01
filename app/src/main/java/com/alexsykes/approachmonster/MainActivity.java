@@ -21,7 +21,9 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.NumberPicker;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.alexsykes.approachmonster.data.ApproachDatabase;
 import com.alexsykes.approachmonster.data.Flight;
@@ -83,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     TextView  identTextView,  incAltTextView,  decAltTextView ;
     TextView    incVectorTextView,  decVectorTextView ;
     TextView   incSpeedTextView,  decSpeedTextView ;
-    EditText speedEdit, vectorEdit, altEdit;
+    TextView speedEdit, vectorEdit, altEdit;
     SwitchMaterial airfieldSwitch, vorSwitch, waypointSwitch;
 
     @Override
@@ -568,7 +570,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                     //  Update database
                     flight.move(UPDATE_PERIOD);
-                    flightDao.updatePosition(flight.getLat(), flight.getLng(), flight.getFlight_id());
+//                    flightDao.updatePosition(flight.getLat(), flight.getLng(), flight.getFlight_id());
                     // Vector shows distance per minute on current track
                     // Calculate projected minute dustance then add
                     double distance = flight.getVelocity() * 60 * 0.51444;

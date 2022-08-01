@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
@@ -17,6 +16,7 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:context=".activities.MapsActivity" />
 
+<!--    Top ButtonBar-->
     <LinearLayout
         android:id="@+id/topBar"
         android:layout_width="match_parent"
@@ -74,6 +74,7 @@
             android:layout_weight="1" />
     </LinearLayout>
 
+<!--    Original Info Panel -->
     <LinearLayout
         android:id="@+id/infoBoxLinearLayout"
         android:layout_width="150dp"
@@ -119,6 +120,7 @@
             android:visibility="gone" />
     </LinearLayout>
 
+<!-- Flight controls    -->
     <LinearLayout
         android:id="@+id/flightInfoBox"
         android:layout_width="wrap_content"
@@ -130,167 +132,181 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+<!--    Ident label  -->
         <TextView
             android:id="@+id/identTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/purple_700"
-            android:paddingTop="@dimen/small_margin"
+            android:background="@color/purple_500"
+            android:textColor="@color/white"
             android:paddingBottom="@dimen/small_margin"
+            android:paddingTop="@dimen/small_margin"
             android:text="@string/ident"
             android:textAlignment="center"
-            android:textColor="@color/white"
             android:textStyle="bold" />
 
+<!--        Flight level -->
         <TextView
             android:id="@+id/textView"
+            android:background="@color/purple_700"
+            android:textColor="@color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/small_margin"
+            android:paddingTop="@dimen/small_margin"
             android:text="@string/flight_level"
-            android:textAlignment="center"
-            android:textColor="@color/purple_700" />
+            android:textAlignment="center" />
 
         <LinearLayout
             android:id="@+id/altLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:layout_margin="@dimen/margin_Start_End"
             android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/decAltTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/small_margin"
-                android:layout_weight="1"
-                android:padding="@dimen/small_margin"
+                android:layout_width="20dp"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/margin_Start_End"
+                android:gravity="center_vertical"
                 android:text="@string/minus"
-                android:textAlignment="viewStart"
+                android:textAlignment="center"
                 android:textColor="@color/purple_700"
-                android:textStyle="bold" />
+                android:textSize="24sp" />
 
-            <EditText
+            <TextView
                 android:id="@+id/altEditText"
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:autofillHints="Altitude"
-                android:hint="@string/altitude"
-                android:inputType="number"
+                android:layout_width="@dimen/value_width"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:padding="@dimen/small_margin"
                 android:textAlignment="textEnd"
                 android:textColor="@color/purple_700"
-                tools:ignore="TouchTargetSizeCheck,TextContrastCheck,DuplicateSpeakableTextCheck" />
+                android:textSize="24sp"
+                tools:ignore="TextContrastCheck" />
 
             <TextView
                 android:id="@+id/incAltTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/small_margin"
-                android:layout_weight="1"
-                android:padding="@dimen/small_margin"
+                android:layout_width="20dp"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/margin_Start_End"
+                android:gravity="center_vertical"
                 android:text="@string/plus"
-                android:textAlignment="viewEnd"
+                android:textAlignment="center"
                 android:textColor="@color/purple_700"
-                android:textStyle="bold" />
+                android:textSize="24sp" />
         </LinearLayout>
 
+<!--       Direction / Vector  -->
         <TextView
             android:id="@+id/textView2"
+            android:background="@color/purple_700"
+            android:textColor="@color/white"
+            android:paddingBottom="@dimen/small_margin"
+            android:paddingTop="@dimen/small_margin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/direction"
-            android:textAlignment="center"
-            android:textColor="@color/purple_700" />
+            android:textAlignment="center" />
 
         <LinearLayout
             android:id="@+id/vectorLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:layout_margin="@dimen/margin_Start_End"
             android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/decVectorTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/small_margin"
-                android:layout_weight="1"
-                android:padding="@dimen/small_margin"
+                android:layout_width="20dp"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/margin_Start_End"
+                android:gravity="center_vertical"
                 android:text="@string/minus"
-                android:textAlignment="viewStart"
+                android:textAlignment="center"
                 android:textColor="@color/purple_700"
-                android:textStyle="bold" />
+                android:textSize="24sp" />
 
-            <EditText
+            <TextView
                 android:id="@+id/vectorEditText"
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:autofillHints="Vector"
-                android:hint="@string/direction"
-                android:inputType="number"
+                android:layout_width="@dimen/value_width"
+                android:layout_height="match_parent"
+                android:padding="@dimen/small_margin"
+                android:gravity="center_vertical"
                 android:textAlignment="textEnd"
                 android:textColor="@color/purple_700"
-                tools:ignore="TouchTargetSizeCheck,DuplicateSpeakableTextCheck,TextContrastCheck" />
+                android:textSize="24sp"
+                tools:ignore="TextContrastCheck" />
 
             <TextView
                 android:id="@+id/incVectorTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/small_margin"
-                android:layout_weight="1"
-                android:padding="@dimen/small_margin"
+                android:layout_width="20dp"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/margin_Start_End"
+                android:gravity="center_vertical"
                 android:text="@string/plus"
-                android:textAlignment="viewEnd"
+                android:textAlignment="center"
                 android:textColor="@color/purple_700"
-                android:textStyle="bold" />
+                android:textSize="24sp" />
         </LinearLayout>
 
-        <TextView
+<!--    Speed -->
+       <TextView
             android:id="@+id/textView3"
+           android:background="@color/purple_700"
+           android:textColor="@color/white"
+           android:paddingBottom="@dimen/small_margin"
+           android:paddingTop="@dimen/small_margin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/speed"
-            android:textAlignment="center"
-            android:textColor="@color/purple_700" />
+            android:textAlignment="center" />
 
         <LinearLayout
             android:id="@+id/speedLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_Start_End"
             android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/decSpeedTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/small_margin"
-                android:layout_weight="1"
-                android:padding="@dimen/small_margin"
+                android:layout_marginVertical="@dimen/small_margin"
+                android:layout_width="20dp"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/margin_Start_End"
+                android:gravity="center_vertical"
                 android:text="@string/minus"
-                android:textAlignment="viewStart"
+                android:textAlignment="center"
                 android:textColor="@color/purple_700"
-                android:textStyle="bold" />
+                android:textSize="24sp" />
 
-
-            <EditText
+            <TextView
                 android:id="@+id/speedEditText"
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:autofillHints="Speed"
-                android:hint="@string/speed"
-                android:inputType="number"
+                android:layout_width="@dimen/value_width"
+                android:layout_height="match_parent"
+                android:padding="@dimen/small_margin"
+                android:gravity="center_vertical"
                 android:textAlignment="textEnd"
                 android:textColor="@color/purple_700"
-                tools:ignore="TouchTargetSizeCheck,TextContrastCheck,DuplicateSpeakableTextCheck" />
+                android:textSize="24sp"
+                tools:ignore="TextContrastCheck" />
 
             <TextView
                 android:id="@+id/incSpeedTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/small_margin"
-                android:layout_weight="1"
-                android:padding="@dimen/small_margin"
+                android:layout_width="20dp"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/margin_Start_End"
+                android:gravity="center_vertical"
                 android:text="@string/plus"
-                android:textAlignment="viewEnd"
+                android:textAlignment="center"
                 android:textColor="@color/purple_700"
-                android:textStyle="bold" />
+                android:textSize="24sp" />
         </LinearLayout>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+
