@@ -1,9 +1,11 @@
 package com.alexsykes.approachmonster.data;
 
 
+import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
@@ -12,6 +14,10 @@ import androidx.room.PrimaryKey;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.SphericalUtil;
+
+import java.sql.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Entity(tableName="flights")
 public class Flight {
@@ -55,6 +61,10 @@ public class Flight {
     private boolean active = true;
     private boolean expired = false;
 
+    @ColumnInfo(defaultValue = "CURRENT_TIMESTAMP")
+    long lastUpdated;
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public Flight(@NonNull String flight_id, double lat, double lng, int altitude, int vector, int velocity, String destination, String type) {
         this.flight_id = flight_id;
         this.lat = lat;
@@ -64,6 +74,8 @@ public class Flight {
         this.velocity = velocity;
         this.destination = destination;
         this.type = type;
+        long currentTimeInMillis = System.currentTimeMillis();
+        this.lastUpdated = currentTimeInMillis;
     }
 
     public void move(int timeLapse) {

@@ -313,7 +313,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         incAltTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                targetAlt++;
+                if (targetAlt < 45) {
+                    targetAlt++;
+                }
                 altEdit.setText(String.valueOf(targetAlt));
                 updateFlight();
             }
@@ -334,9 +336,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onClick(View v) {
                 if(targetVector < 360) {
-                    targetVector++;
+                    targetVector = targetVector + 10;
                 } else {
-                    targetVector = 1;
+                    targetVector = 10;
                 }
                 vectorEdit.setText(String.valueOf(targetVector));
                 updateFlight();
@@ -346,8 +348,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         decVectorTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (targetVector > 1) {
-                    targetVector--;
+                if (targetVector >= 20) {
+                    targetVector = targetVector - 10;
                 } else {
                     targetVector = 360;
                 }
@@ -360,7 +362,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onClick(View v) {
                 if(targetVelocity < 500) {
-                    targetVelocity = targetVelocity + 5;
+                    targetVelocity = targetVelocity + 10;
+                } else {
+                    targetVelocity = 500;
                 }
                 speedEdit.setText(String.valueOf(targetVelocity));
                 updateFlight();
@@ -370,8 +374,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         decSpeedTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (targetVelocity > 5) {
-                    targetVelocity = targetVelocity - 5;
+                if (targetVelocity > 10) {
+                    targetVelocity = targetVelocity - 10;
                 }
                 speedEdit.setText(String.valueOf(targetVelocity));
                 updateFlight();
