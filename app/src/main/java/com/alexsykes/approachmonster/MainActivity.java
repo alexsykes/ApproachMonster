@@ -66,9 +66,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private NavaidViewModel navaidViewModel;
     private FlightViewModel flightViewModel;
     private boolean airfieldsVisible, waypointsVisible, vorsVisible;
-    List<Navaid> airfieldList, vrpList, vorList, waypointList;
+    List<Navaid> airfieldList, vorList, waypointList;
     List<Flight> flightList;
-    ArrayList<Marker> currentMarkers;
     ArrayList<Polyline> currentPolylines;
     MarkerManager markerManager;
     MarkerManager.Collection airfieldMarkerCollection, vorMarkerCollection, waypointMarkerCollection, currentFlightCollection;
@@ -270,14 +269,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 return false;
             }
         });
-        // Start updates following initial delay
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                Log.i(TAG, "waited:  UPDATE_PERIOD");
-//                handler.post(flightProgressTimer);
-//            }
-//        }, UPDATE_PERIOD);
+
         handler.post(flightProgressTimer);
     }
 
@@ -313,8 +305,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         incAltTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (targetAlt < 45) {
-                    targetAlt++;
+                if (targetAlt < 450) {
+                    targetAlt = targetAlt + 10;
+                } else {
+                    targetAlt = 450;
                 }
                 altEdit.setText(String.valueOf(targetAlt));
                 updateFlight();
@@ -324,8 +318,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         decAltTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (targetAlt > 0) {
-                    targetAlt--;
+                if (targetAlt > 10) {
+                    targetAlt = targetAlt - 10;
+                } else {
+                    targetAlt = 0;
                 }
                 altEdit.setText(String.valueOf(targetAlt));
                 updateFlight();
@@ -574,7 +570,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                     //  Update database
                     flight.move(UPDATE_PERIOD);
-//                    flightDao.updatePosition(flight.getLat(), flight.getLng(), flight.getFlight_id());
+                    flightDao.updatePosition(flight.getLat(), flight.getLng(), flight.getFlight_id());
                     // Vector shows distance per minute on current track
                     // Calculate projected minute dustance then add
                     double distance = flight.getVelocity() * 60 * 0.51444;

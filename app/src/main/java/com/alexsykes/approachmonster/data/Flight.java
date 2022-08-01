@@ -30,29 +30,6 @@ public class Flight {
     private int altitude, vector, velocity;
     private int targetAltitude, targetVector, targetVelocity;
 
-    public int getTargetAltitude() {
-        return targetAltitude;
-    }
-
-    public void setTargetAltitude(int targetAltitude) {
-        this.targetAltitude = targetAltitude;
-    }
-
-    public int getTargetVector() {
-        return targetVector;
-    }
-
-    public void setTargetVector(int targetVector) {
-        this.targetVector = targetVector;
-    }
-
-    public int getTargetVelocity() {
-        return targetVelocity;
-    }
-
-    public void setTargetVelocity(int targetVelocity) {
-        this.targetVelocity = targetVelocity;
-    }
 
     private String destination;
 
@@ -64,7 +41,6 @@ public class Flight {
     @ColumnInfo(defaultValue = "CURRENT_TIMESTAMP")
     long lastUpdated;
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     public Flight(@NonNull String flight_id, double lat, double lng, int altitude, int vector, int velocity, String destination, String type) {
         this.flight_id = flight_id;
         this.lat = lat;
@@ -74,6 +50,9 @@ public class Flight {
         this.velocity = velocity;
         this.destination = destination;
         this.type = type;
+        this.targetAltitude = altitude;
+        this.targetVector = vector;
+        this.targetVelocity = velocity;
         long currentTimeInMillis = System.currentTimeMillis();
         this.lastUpdated = currentTimeInMillis;
     }
@@ -164,5 +143,37 @@ public class Flight {
 
     public void setExpired(boolean expired) {
         this.expired = expired;
+    }
+
+    public long getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(long lastUpdated) {
+        this.lastUpdated = lastUpdated;
+    }
+
+    public int getTargetAltitude() {
+        return targetAltitude;
+    }
+
+    public void setTargetAltitude(int targetAltitude) {
+        this.targetAltitude = targetAltitude;
+    }
+
+    public int getTargetVector() {
+        return targetVector;
+    }
+
+    public void setTargetVector(int targetVector) {
+        this.targetVector = targetVector;
+    }
+
+    public int getTargetVelocity() {
+        return targetVelocity;
+    }
+
+    public void setTargetVelocity(int targetVelocity) {
+        this.targetVelocity = targetVelocity;
     }
 }
