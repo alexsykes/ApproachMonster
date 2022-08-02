@@ -56,6 +56,7 @@ public abstract class ApproachDatabase extends RoomDatabase {
                 addFlights();
                 addTypes();
                 addData1();
+                addData();
 
 
 

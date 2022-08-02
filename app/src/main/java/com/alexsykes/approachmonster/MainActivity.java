@@ -25,7 +25,6 @@ import com.alexsykes.approachmonster.data.Flight;
 import com.alexsykes.approachmonster.data.FlightDao;
 import com.alexsykes.approachmonster.data.FlightViewModel;
 import com.alexsykes.approachmonster.data.Navaid;
-import com.alexsykes.approachmonster.data.NavaidDao;
 import com.alexsykes.approachmonster.data.NavaidViewModel;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -56,7 +55,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private final int UPDATE_PERIOD = 1000; // millis
     final Handler handler = new Handler();
     private final String TAG = "Info";
-    private NavaidDao navaidDao;
     private FlightDao flightDao;
     private NavaidViewModel navaidViewModel;
     private FlightViewModel flightViewModel;
@@ -108,7 +106,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         // Get saved data
         airfieldList = navaidViewModel.getAllAirfields();
-//        vrpList = navaidViewModel.getAllVrps();
         vorList = navaidViewModel.getAllVors();
         waypointList = navaidViewModel.getAllWaypoints();
         setupUi();
@@ -233,17 +230,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapLoaded() {
         Log.i(TAG, "onMapLoaded: ");
-//        addNavaidsToMap(airfieldList, 1);
         addNavaidsToMap(vorList, 2);
         addAirfieldsToMap(airfieldList);
         addWaypointsToMap(waypointList);
-//        addFlightsToMap();
 
         currentPolylines = new ArrayList<Polyline>();
         vorMarkerCollection.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(@NonNull Marker marker) {
-                Log.i(TAG, "vorMarkers.onMarkerClick: ");
                 markerClicked(marker);
                 marker.showInfoWindow();
                 return false;
@@ -252,7 +246,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         airfieldMarkerCollection.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(@NonNull Marker marker) {
-                Log.i(TAG, "airfieldMarkers.onMarkerClick: ");
                 markerClicked(marker);
                 return false;
             }
@@ -260,7 +253,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         waypointMarkerCollection.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(@NonNull Marker marker) {
-                Log.i(TAG, "waypointMarkers.onMarkerClick: ");
                 markerClicked(marker);
                 return false;
             }
@@ -268,7 +260,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         currentFlightCollection.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(@NonNull Marker marker) {
-                Log.i(TAG, "currentFlightCollection.onMarkerClick: ");
                 flightMarkerClicked(marker);
                 return false;
             }
@@ -476,7 +467,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     String snippet;
                     //  Update database
                     flight.move(UPDATE_PERIOD);
-                    snippet = "FL: " + flight.getAltitude();
                     flightDao.updatePosition(flight.getLat(), flight.getLng(), flight.getFlight_id());
                     // Vector shows distance per minute on current track
                     // Calculate projected minute dustance then add
