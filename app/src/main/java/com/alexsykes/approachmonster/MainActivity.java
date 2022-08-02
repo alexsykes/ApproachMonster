@@ -540,8 +540,68 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     boolean dataChanged = false;
                     int currentAlt, currentVector, currentVelocity, targetVelocity, targetAlt, targetVector, deltaVector, adjustedCurrent, adjustedTarget;
 
+                    // Get current and target values from database
                     currentAlt = flight.getAltitude();
                     targetAlt = flight.getTargetAltitude();
+                    currentVector = flight.getVector();
+                    targetVector = flight.getTargetVector();
+                    currentVelocity = flight.getVelocity();
+                    targetVelocity = flight.getTargetVelocity();
+
+                    // Populate unknowns
+                    adjustedCurrent = currentVector;
+                    adjustedTarget = targetVector;
+
+                    // Display flight data for one flight
+                    if (flight.getFlight_id().equals("BA1135")) {
+                        speedLabel.setText("Speed: " + currentVelocity + " kts");
+                        vectorLabel.setText("Direction:  " + currentVector + "°");
+                        altLabel.setText("Flight Level: " + currentAlt);
+                    }
+//                  Vector calculation starts here
+                    if(currentVector != targetVector) {
+//                      Calculate delta as an absolute value
+                        deltaVector = Math.abs(targetVector - currentVector);
+                        dataChanged = true;
+
+                        Log.i(TAG, "delta: " + deltaVector);
+//                      If the delta is >180, get its complement
+                        if (deltaVector > 180) {
+                            deltaVector = 360 - deltaVector;
+                        }
+                        Log.i(TAG, "complement: " + deltaVector);
+
+                        if (currentVector > 180) {
+                            adjustedCurrent = -(360 - currentVector);
+                        }
+
+                        if (targetVector > 180) {
+                            adjustedTarget = -(360 - currentVector);
+                        }
+
+                        if (adjustedTarget > adjustedCurrent) {
+                            clockwise = true;
+                        } else {
+                            clockwise = false;
+                        }
+
+//                  Calculate rotational direction
+                        if (clockwise) {
+                            currentVector++;
+                            if (currentVector > 360) {
+                                currentVector = currentVector - 360;
+                            }
+                        } else {
+                            currentVector--;
+                            if (currentVector <= 1) {
+                                currentVector = 360 + currentVector;
+                            }
+                        }
+
+
+//                        Log.i(TAG, "run: " + flight.getFlight_id() + "deltaVector: " + deltaVector);
+                    }
+//                  Vector calculation ends here
 
                     if (currentAlt < targetAlt) {
                         currentAlt++;
@@ -550,53 +610,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         currentAlt--;
                         dataChanged = true;
                     }
-
-                    currentVector = flight.getVector();
-                    targetVector = flight.getTargetVector();
-
-                    adjustedCurrent = currentVector;
-                    adjustedTarget = targetVector;
-
-//                    Calculate delta
-                    deltaVector = Math.abs(targetVector - currentVector);
-
-                    dataChanged = true;
-                    if (deltaVector > 180) {
-                        deltaVector = 360 - deltaVector;
-                    }
-
-                    if(currentVector > 180) {
-                        adjustedCurrent = -(360 - currentVector);
-                    }
-
-                    if(targetVector > 180) {
-                        adjustedTarget = -(360 - currentVector);
-                    }
-
-                    if(adjustedTarget > adjustedCurrent)      {
-                        clockwise = true;
-                    } else {
-                        clockwise = false;
-                    }
-
-//                  Calculate rotational direction
-                    if(clockwise)
-                    {
-                        currentVector++;
-                        if (currentVector > 360) {
-                            currentVector = 1;
-                        }
-                    } else {
-                        currentVector--;
-                        if (currentVector <= 1) {
-                            currentVector = 360;
-                        }
-                    }
-
-                    Log.i(TAG, "run: " + flight.getFlight_id() + "deltaVector: " + deltaVector);
-
-                    currentVelocity = flight.getVelocity();
-                    targetVelocity = flight.getTargetVelocity();
 
                     if (currentVelocity < targetVelocity) {
                         currentVelocity++;
