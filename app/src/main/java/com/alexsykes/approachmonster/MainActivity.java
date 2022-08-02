@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     TextView  identTextView,  incAltTextView,  decAltTextView ;
     TextView    incVectorTextView,  decVectorTextView ;
     TextView   incSpeedTextView,  decSpeedTextView ;
-    TextView speedEdit, vectorEdit, altEdit;
+    TextView speedEdit, vectorEdit, altEdit, altLabel, vectorLabel, speedLabel;
     SwitchMaterial airfieldSwitch, vorSwitch, waypointSwitch;
 
     @Override
@@ -131,11 +131,20 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         flightInfoBoxLayout.setVisibility(View.GONE);
 
         identTextView  = findViewById(R.id.identTextView);
+        identTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                flightInfoBoxLayout.setVisibility(View.GONE);
+            }
+        });
         incAltTextView  = findViewById(R.id.incAltTextView);
         altEdit   = findViewById(R.id.altEditText);
         decAltTextView  = findViewById(R.id.decAltTextView);
 
 
+        altLabel = findViewById(R.id.altLabel);
+        speedLabel = findViewById(R.id.speedLabel);
+        vectorLabel = findViewById(R.id.vectorLabel);
         vectorEdit  = findViewById(R.id.vectorEditText);
         incVectorTextView  = findViewById(R.id.incVectorTextView);
         decVectorTextView  = findViewById(R.id.decVectorTextView);
@@ -283,6 +292,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         currentVector = flight.getVector();
         currentVelocity = flight.getVelocity();
 
+        speedLabel.setText("Speed: " + currentVelocity + " kts");
+        vectorLabel.setText("Direction:  " + currentVector + "°");
+        altLabel.setText("Flight Level: " + currentAlt );
+
         targetAlt = flight.getTargetAltitude();
         targetVector = flight.getTargetVector();
         targetVelocity = flight.getTargetVelocity();
@@ -393,48 +406,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             navaidTypeTextView.setText(navaid.getType());
         }
     }
-//
-//    private void addFlightsToMap() {
-//        currentMarkers = new ArrayList<Marker>();
-////        currentPolylines = new ArrayList<Polyline>();
-////        currentFlightCollection.clear();
-//
-//        // Get current flight list
-//        flightList = flightDao.getActiveFlightList();
-//
-//        // Set up current position and icon
-//        LatLng currentPosition, lineEnd;
-//        BitmapDescriptor square = BitmapFromVector(getApplicationContext(), R.drawable.ic_baseline_square_24);
-//
-//        // Using existing flightList
-//        for(Flight flight: flightList) {
-////            Calculate current position and vector
-//            currentPosition = new LatLng(flight.getLat(), flight.getLng());
-//
-//            // Vector shows distance per minute on current track
-//            double distance = flight.getVelocity() * 60 * 0.51444;
-//            lineEnd = SphericalUtil.computeOffset(currentPosition, distance, flight.getVector());
-//            MarkerOptions markerOptionsSquare = new MarkerOptions()
-//                    .position(currentPosition)
-//                    .title(flight.getFlight_id())
-//                    .visible(true);
-//
-//            markerOptionsSquare.icon(square);
-//            markerOptionsSquare.anchor(0.5f, 0.5f);
-////            Marker currentMarker = currentFlightCollection.addMarker(markerOptionsSquare);
-////            currentMarker.setTag(flight.getFlight_id());
-//
-//            Polyline polyline = mMap.addPolyline((new PolylineOptions()).add(currentPosition, lineEnd).
-//                    width(3)
-//                    .color(Color.WHITE)
-//                    .geodesic(true));
-//            currentFlightCollection.addMarker(markerOptionsSquare);
-////            currentPolylines.add(polyline);
-////            currentMarkers.add(currentMarker);
-////            Log.i(TAG, "addFlightsToMap: " + latLng);
-//        }
-//        Log.i(TAG, "flights added: ");
-//    }
 
     private void addNavaidsToMap(List<Navaid> navaids, int typeCode) {
         if (navaids.size() == 0) {
@@ -560,16 +531,55 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 for (Polyline polyline : currentPolylines) {
                     polyline.remove();
                 }
-//                }
 
 //              Define icon
                 BitmapDescriptor square = BitmapFromVector(getApplicationContext(), R.drawable.ic_baseline_square_24);
                 for (Flight flight: flightList) {
 //                  Get current position, then update
                     LatLng currentPosition = new LatLng(flight.getLat(), flight.getLng());
+                    boolean dataChanged = false;
+                    int currentAlt, currentVector, currentVelocity, targetVelocity, targetAlt, targetVector;
+                    currentAlt = flight.getAltitude();
+                    targetAlt = flight.getTargetAltitude();
 
+                    if (currentAlt < targetAlt) {
+                        currentAlt++;
+                        dataChanged = true;
+                    } else if (currentAlt > targetAlt) {
+                        currentAlt--;
+                        dataChanged = true;
+                    }
+
+                    currentVector = flight.getVector();
+                    targetVector = flight.getTargetVector();
+
+//                    if (currentAlt < targetAlt) {
+//                        currentAlt++;
+//                        dataChanged = true;
+//                    } else if (currentAlt > targetAlt) {
+//                        currentAlt--;
+//                        dataChanged = true;
+//                    }
+
+                    currentVelocity = flight.getVelocity();
+                    targetVelocity = flight.getTargetVelocity();
+
+                    if (currentVelocity < targetVelocity) {
+                        currentVelocity++;
+                        dataChanged = true;
+                    } else if (currentVelocity > targetVelocity) {
+                        currentVelocity--;
+                        dataChanged = true;
+                    }
+
+                    if(dataChanged) {
+                        flightDao.updateFlight(currentVector, currentVelocity, currentAlt, flight.getFlight_id());
+                    }
+
+                    String snippet;
                     //  Update database
                     flight.move(UPDATE_PERIOD);
+                    snippet = "FL: " + flight.getAltitude();
                     flightDao.updatePosition(flight.getLat(), flight.getLng(), flight.getFlight_id());
                     // Vector shows distance per minute on current track
                     // Calculate projected minute dustance then add

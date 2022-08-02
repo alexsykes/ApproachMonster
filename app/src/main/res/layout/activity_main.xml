@@ -19,21 +19,21 @@
 <!--    Top ButtonBar-->
     <LinearLayout
         android:id="@+id/topBar"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toStartOf="@+id/infoBoxLinearLayout"
+        android:orientation="vertical"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_margin="@dimen/standard_margin">
 
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
+<!--        <Space-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_weight="1" />-->
 
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/airportSwitch"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0"
             android:background="@color/purple_700"
@@ -46,7 +46,7 @@
 
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/waypointSwitch"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0"
             android:background="@color/purple_700"
@@ -58,7 +58,7 @@
 
         <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/vorSwitch"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0"
             android:background="@color/purple_700"
@@ -68,10 +68,10 @@
             android:text="@string/vor"
             android:textColor="@color/white" />
 
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
+<!--        <Space-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_weight="1" />-->
     </LinearLayout>
 
 <!--    Original Info Panel -->
@@ -147,7 +147,7 @@
 
 <!--        Flight level -->
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/altLabel"
             android:background="@color/purple_700"
             android:textColor="@color/white"
             android:layout_width="match_parent"
@@ -201,7 +201,7 @@
 
 <!--       Direction / Vector  -->
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/vectorLabel"
             android:background="@color/purple_700"
             android:textColor="@color/white"
             android:paddingBottom="@dimen/small_margin"
@@ -255,7 +255,7 @@
 
 <!--    Speed -->
        <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/speedLabel"
            android:background="@color/purple_700"
            android:textColor="@color/white"
            android:paddingBottom="@dimen/small_margin"

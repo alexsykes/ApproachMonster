@@ -176,4 +176,24 @@ public class Flight {
     public void setTargetVelocity(int targetVelocity) {
         this.targetVelocity = targetVelocity;
     }
+
+    public ClimbData getClimbData(Flight flight)  {
+        ClimbData climbData = new ClimbData();
+        if (flight.altitude < 5000) {
+            climbData.speedLimit = 290;
+            climbData.climeRate = 3000;
+        } else if(flight.altitude < 24000) {
+            climbData.speedLimit = 460;
+            climbData.climeRate = 2000;
+        } else {
+            climbData.speedLimit = 460;
+            climbData.climeRate = 1500;
+        }
+        return climbData;
+    }
+
+    private class ClimbData {
+        Flight flight;
+        int speedLimit, climeRate;
+    }
 }
