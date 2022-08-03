@@ -37,4 +37,10 @@ public class NavaidViewModel extends AndroidViewModel {
 
     public List<Navaid> getAllWaypoints() { return allWaypoints; }
 
+    public Navaid getRandomNavaid() {
+        int numNavaids = getAllWaypoints().size();
+        int randomInt = (int) (1 + (Math.random() * numNavaids));
+
+        return allWaypoints.get(randomInt);
+    }
 }
