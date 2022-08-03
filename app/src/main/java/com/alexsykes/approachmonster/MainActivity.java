@@ -90,7 +90,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         // Get saved values
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         editor = prefs.edit();
@@ -111,6 +110,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         runwayViewModel = new ViewModelProvider(this).get(RunwayViewModel.class);
         flightDao = db.flightDao();
 
+//        nukeFlights(false);
         // Get saved data
         airfieldList = navaidViewModel.getAllAirfields();
         vorList = navaidViewModel.getAllVors();
@@ -514,15 +514,18 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         @Override
         public void run() {
             try{
-//                Navaid egcc = navaidViewModel.getNavaidById("EGCC");
-//                Flight newFlight = new Flight("EZ1121", );
-
-                randomDelay = (long) (Math.random() * 10000);
-                addOutbound();
-                addIncoming();
-                Log.i(TAG, "Flight added: ");
-
-
+                randomDelay = (long) (Math.random() * 60000);
+                if(flightList.size() < 10) {
+                    int randomInt = (int) (Math.random() * 2);
+                    if(randomInt == 1) {
+                        addOutbound();
+                    } else {
+                        addIncoming();
+                    }
+                    Log.i(TAG, "Flight added: randomInt: " + randomInt);
+                } else {
+                    Log.i(TAG, "No flight added - quota exceeded ");
+                }
             }
             catch (Exception e) {
                 // TODO: handle exception
@@ -548,21 +551,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         LatLng touchDown = new LatLng(runway.getLat(), runway.getLng());
 
         int vector = (int) SphericalUtil.computeHeading(origin, touchDown);
+        vector = (vector + 360) % 360;
 
         String waypointName = startPoint.getName();
         String code = generateFlightCode();
 
         Random rnd = new Random();
-        int startAlt = (int) (10000 + (rnd.nextInt(350) ));
+        int startAlt = (int) 10 * (10 + (rnd.nextInt(35) ));
         int startVel  = (int) (250 + (rnd.nextInt(21)*10));
 
         Flight flight = new Flight(code,startPoint.getLat(), startPoint.getLng(), startAlt, vector, startVel, "EGCC", "B747");
+
         Log.i(TAG, "addIncoming: ");
-//        Flight flight = new Flight("WA1893", runway.getLat(), runway.getLng(), runway.getElevation(), runway.getDirection(), 0, "EEFG", "B777");
 
-       flightDao.insertFlight(flight);
+        flightDao.insertFlight(flight);
     }
-
 
     private String generateFlightCode () {
         String caps = "ABCDEFGHJKLMNPQRSTUVWXYZ";
@@ -583,7 +586,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         return sb.toString();
     }
 
-
+    private void nukeFlights(boolean b) {
+        flightViewModel.deleteAllActiveFlights(true);
+    }
 
     private void addNavaidsToMap(List<Navaid> navaids, int typeCode) {
         if (navaids.size() == 0) {

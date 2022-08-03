@@ -40,4 +40,12 @@ public class FlightRepository {
     public void updateFlightPosition(double lat, double lng, String flight_id) {
         flightDao.updatePosition(lat, lng, flight_id);
     }
+
+    public void destroyFlights() {
+        flightDao.deleteAllFlights();
+    }
+
+    public void expireFlights() {
+        flightDao.expireFlights();
+    }
 }

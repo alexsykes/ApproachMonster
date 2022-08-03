@@ -37,4 +37,7 @@ public interface FlightDao {
 
     @Query("UPDATE flights SET altitude = :currentAlt, vector = :currentVector, velocity = :currentVelocity WHERE flight_id = :flight_id")
     void updateFlight(int currentVector, int currentVelocity, int currentAlt, String flight_id);
+
+    @Query("UPDATE flights SET expired = 1, active = 0")
+    void expireFlights();
 }

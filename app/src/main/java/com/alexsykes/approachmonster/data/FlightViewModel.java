@@ -38,4 +38,12 @@ public class FlightViewModel extends AndroidViewModel {
     public void updateFlightPosition(double lat, double lng, String flight_id) {
         flightRepository.updateFlightPosition(lat, lng, flight_id);
     }
+
+    public void deleteAllActiveFlights(boolean destroy) {
+        if (destroy) {
+            flightRepository.destroyFlights();
+        } else {
+            flightRepository.expireFlights();
+        }
+    }
 }
