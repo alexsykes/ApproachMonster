@@ -26,6 +26,8 @@ import com.alexsykes.approachmonster.data.FlightDao;
 import com.alexsykes.approachmonster.data.FlightViewModel;
 import com.alexsykes.approachmonster.data.Navaid;
 import com.alexsykes.approachmonster.data.NavaidViewModel;
+import com.alexsykes.approachmonster.data.Runway;
+import com.alexsykes.approachmonster.data.RunwayViewModel;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -44,6 +46,7 @@ import com.google.maps.android.collections.MarkerManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 
 // TODO implement layer visibility switches
@@ -52,15 +55,18 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GoogleMap mMap;
     private final LatLng DEFAULT_LOCATION = new LatLng(53.355437, -2.277298);
     private final int DEFAULT_ZOOM = 9;
-    private final int UPDATE_PERIOD = 1000; // millis
+    private final int UPDATE_PERIOD = 1000; // milli
+    private long randomDelay;
     final Handler handler = new Handler();
     private final String TAG = "Info";
     private FlightDao flightDao;
     private NavaidViewModel navaidViewModel;
     private FlightViewModel flightViewModel;
+    private RunwayViewModel runwayViewModel;
     private boolean airfieldsVisible, waypointsVisible, vorsVisible, clockwise;
     List<Navaid> airfieldList, vorList, waypointList;
     List<Flight> flightList;
+    List<Runway> runwayList;
     ArrayList<Polyline> currentPolylines;
     MarkerManager markerManager;
     MarkerManager.Collection airfieldMarkerCollection, vorMarkerCollection, waypointMarkerCollection, currentFlightCollection;
@@ -102,12 +108,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         ApproachDatabase db = ApproachDatabase.getDatabase(this);
         navaidViewModel = new ViewModelProvider(this).get(NavaidViewModel.class);
         flightViewModel = new ViewModelProvider(this).get(FlightViewModel.class);
+        runwayViewModel = new ViewModelProvider(this).get(RunwayViewModel.class);
         flightDao = db.flightDao();
 
         // Get saved data
         airfieldList = navaidViewModel.getAllAirfields();
         vorList = navaidViewModel.getAllVors();
         waypointList = navaidViewModel.getAllWaypoints();
+        runwayList = runwayViewModel.getRunwayList();
         setupUi();
     }
 
@@ -266,6 +274,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
 
         handler.post(flightProgressTimer);
+        handler.post(mainLoop);
     }
 
     private void flightMarkerClicked(Marker marker) {
@@ -429,7 +438,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         if(deltaVector < 0 ) {
                             deltaVector = deltaVector + 360;
                         }
-                        Log.i(TAG, "delta: " + deltaVector);
+//                        Log.i(TAG, "delta: " + deltaVector);
 
                         if ( deltaVector < 180) {
                             clockwise = true;
@@ -497,6 +506,33 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             finally{
                 //also call the same runnable to call it at regular interval
                 handler.postDelayed(this, UPDATE_PERIOD);
+            }
+        }
+    };
+
+    Runnable mainLoop = new Runnable() {
+        @Override
+        public void run() {
+            try{
+//                Navaid egcc = navaidViewModel.getNavaidById("EGCC");
+//                Flight newFlight = new Flight("EZ1121", );
+
+                randomDelay = (long) (Math.random() * 1000);
+                Runway runway = getRandomRunway();
+                Flight flight = new Flight("WA1893", runway.getLat(), runway.getLng(), runway.getElevation(), runway.getDirection(), 0, "EEFG", "B777");
+
+                flightDao.insertFlight(flight);
+                Log.i(TAG, "Flight added: ");
+
+
+            }
+            catch (Exception e) {
+                // TODO: handle exception
+                Log.i(TAG, "Error: ");
+            }
+            finally{
+                //also call the same runnable to call it at regular interval
+                handler.postDelayed(this, randomDelay);
             }
         }
     };
@@ -598,6 +634,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         } else {
             waypointMarkerCollection.hideAll();
         }
+    }
+
+    private Runway getRandomRunway() {
+        int numRunways = runwayList.size();
+        int randomInt = (int) (Math.random() * 4);
+        Runway runway = runwayList.get(randomInt);
+        return runway;
     }
 
     private BitmapDescriptor BitmapFromVector(Context context, int vectorResId) {

@@ -11,12 +11,13 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {Navaid.class, Flight.class, Type.class}, version = 1, exportSchema = false)
+@Database(entities = {Navaid.class, Flight.class, Type.class, Runway.class}, version = 1, exportSchema = false)
 
 public abstract class ApproachDatabase extends RoomDatabase {
     public abstract NavaidDao navaidDao();
     public abstract FlightDao flightDao();
     public abstract TypeDao typeDao();
+    public abstract RunwayDao runwayDao();
 
     private static volatile ApproachDatabase INSTANCE;
     private static final int NUMBER_OF_THREADS = 4;
@@ -57,8 +58,7 @@ public abstract class ApproachDatabase extends RoomDatabase {
                 addTypes();
                 addData1();
                 addData();
-
-
+                addRunways();
 
             });
         }
@@ -76,7 +76,6 @@ public abstract class ApproachDatabase extends RoomDatabase {
             flight = new Flight("SV113", 51.2398, -0.334, 200, 170 , 120, "EGCC", "B777");
             flightDao.insertFlight(flight);
         }
-
         private void addData() {
             NavaidDao navaidDao = INSTANCE.navaidDao();
             Navaid navaid = new Navaid(1, "LFAC", "Abbeville", "Airfield", 50.1437, 1.83083);
@@ -3262,8 +3261,18 @@ public abstract class ApproachDatabase extends RoomDatabase {
             navaid = new Navaid(1691, "---", "Zeals", "Airfield", 51.0947, -2.31583);
             navaidDao.insertNavaid(navaid);
         }
+        private void addRunways() {
+            RunwayDao runwayDao = INSTANCE.runwayDao();
 
-
+            Runway runway = new Runway(53.332202, -2.310214, 10007,51, 186,"EGCC", "05R");
+            runwayDao.insertRunway(runway);
+            runway = new Runway(53.348142, -2.277159, 10007,231, 227,"EGCC", "23L");
+            runwayDao.insertRunway(runway);
+            runway = new Runway(53.345898, -2.291202, 10000,52, 212,"EGCC", "05L");
+            runwayDao.insertRunway(runway);
+            runway = new Runway(53.362345, -2.257142, 10000,232, 249,"EGCC", "23R");
+            runwayDao.insertRunway(runway);
+        }
         private void addData1() {
 
             NavaidDao navaidDao = INSTANCE.navaidDao();
