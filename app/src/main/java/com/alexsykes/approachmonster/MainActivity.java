@@ -218,13 +218,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.getUiSettings().setRotateGesturesEnabled(false);
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setMapToolbarEnabled(false);
-//        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-//            @Override
-//            public boolean onMarkerClick(@NonNull Marker marker) {
-//                markerClicked(marker);
-//                return false;
-//            }
-//        });
 
         boolean success = mMap.setMapStyle(new MapStyleOptions(getResources()
                 .getString(R.string.map_style)));
@@ -509,7 +502,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }
     };
-
     Runnable mainLoop = new Runnable() {
         @Override
         public void run() {

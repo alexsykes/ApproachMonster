@@ -307,6 +307,15 @@
                 android:textSize="24sp" />
         </LinearLayout>
     </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/flightListRV"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:elevation="@dimen/standard_margin"
+        app:layout_constraintTop_toBottomOf="@id/flightInfoBox"
+        app:layout_constraintEnd_toEndOf="@+id/flightInfoBox"
+        app:layout_constraintStart_toStartOf="@+id/flightInfoBox" />
 </androidx.constraintlayout.widget.ConstraintLayout>
 
 
