@@ -19,6 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.alexsykes.approachmonster.data.ApproachDatabase;
 import com.alexsykes.approachmonster.data.Flight;
@@ -85,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     TextView   incSpeedTextView,  decSpeedTextView ;
     TextView speedEdit, vectorEdit, altEdit, altLabel, vectorLabel, speedLabel;
     SwitchMaterial airfieldSwitch, vorSwitch, waypointSwitch;
+    RecyclerView flightListRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,6 +143,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         altEdit   = findViewById(R.id.altEditText);
         decAltTextView  = findViewById(R.id.decAltTextView);
 
+        flightListRecyclerView = findViewById(R.id.flightListRV);
 
         altLabel = findViewById(R.id.altLabel);
         speedLabel = findViewById(R.id.speedLabel);
@@ -518,10 +521,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 } else {
                     Log.i(TAG, "No flight added - quota exceeded ");
                 }
+                flightListRecyclerView = findViewById(R.id.flightListRV);
+                final FlightDataListAdapter flightDataListAdapter = new FlightDataListAdapter(flightList);
+                flightListRecyclerView.setAdapter(flightDataListAdapter);
             }
             catch (Exception e) {
                 // TODO: handle exception
-                Log.i(TAG, "Error: ");
+                Log.i(TAG, "Error: " + e.getLocalizedMessage());
             }
             finally{
                 //also call the same runnable to call it at regular interval

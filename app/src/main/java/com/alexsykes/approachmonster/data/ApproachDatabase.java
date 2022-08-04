@@ -65,16 +65,16 @@ public abstract class ApproachDatabase extends RoomDatabase {
 
         private void addFlights() {
             FlightDao flightDao = INSTANCE.flightDao();
-            Flight flight = new Flight("BA1135", 53.4, -2.35, 30, 300 , 350, "EGNM", "B737");
-            flightDao.insertFlight(flight);
-            flight = new Flight("EZ223", 53.402, -2.32145, 120, 210 , 270, "EGCC", "B787");
-            flightDao.insertFlight(flight);
-            flight = new Flight("SV123", 53.4902, -2.295, 20, 130 , 120, "EGCC", "B777");
-            flightDao.insertFlight(flight);
-            flight = new Flight("RAF0", 54.1172, -1.01254, 180, 40 , 270, "EGNM", "B777");
-            flightDao.insertFlight(flight);
-            flight = new Flight("SV113", 51.2398, -0.334, 200, 170 , 120, "EGCC", "B777");
-            flightDao.insertFlight(flight);
+//            Flight flight = new Flight("BA1135", 53.4, -2.35, 30, 300 , 350, "EGNM", "B737");
+//            flightDao.insertFlight(flight);
+//            flight = new Flight("EZ223", 53.402, -2.32145, 120, 210 , 270, "EGCC", "B787");
+//            flightDao.insertFlight(flight);
+//            flight = new Flight("SV123", 53.4902, -2.295, 20, 130 , 120, "EGCC", "B777");
+//            flightDao.insertFlight(flight);
+//            flight = new Flight("RAF0", 54.1172, -1.01254, 180, 40 , 270, "EGNM", "B777");
+//            flightDao.insertFlight(flight);
+//            flight = new Flight("SV113", 51.2398, -0.334, 200, 170 , 120, "EGCC", "B777");
+//            flightDao.insertFlight(flight);
         }
         private void addData() {
             NavaidDao navaidDao = INSTANCE.navaidDao();

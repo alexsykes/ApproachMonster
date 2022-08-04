@@ -310,12 +310,13 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/flightListRV"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:elevation="@dimen/standard_margin"
-        app:layout_constraintTop_toBottomOf="@id/flightInfoBox"
-        app:layout_constraintEnd_toEndOf="@+id/flightInfoBox"
-        app:layout_constraintStart_toStartOf="@+id/flightInfoBox" />
+        android:background="@color/white"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
 
 
