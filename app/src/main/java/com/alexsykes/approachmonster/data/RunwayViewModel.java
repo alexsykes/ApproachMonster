@@ -17,11 +17,11 @@ public class RunwayViewModel extends AndroidViewModel {
         super(application);
 
         runwayRepository = new RunwayRepository(application);
-        runway = runwayRepository.getRunway(runway_id);
+        runway = runwayRepository.getRunwayById(runway_id);
         runwayList = runwayRepository.getRunwayList();
     }
 
-    public Runway getRunway(int runway_id) { return runway; };
+    public Runway getRunwayById(int runway_id) { return runway; };
 
     public List<Runway> getRunwayList() {
         return runwayList;

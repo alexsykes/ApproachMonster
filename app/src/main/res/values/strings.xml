@@ -15,4 +15,6 @@
     <string name="direction">Direction °</string>
     <string name="speed">Speed - Kts</string>
     <string name="flight_data">Flight data</string>
+    <string name="minusTen">-10</string>
+    <string name="plusTen">+10</string>
 </resources>

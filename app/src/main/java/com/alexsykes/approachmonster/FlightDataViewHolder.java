@@ -1,11 +1,13 @@
 package com.alexsykes.approachmonster;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.alexsykes.approachmonster.data.Flight;
@@ -20,7 +22,11 @@ public class FlightDataViewHolder extends RecyclerView.ViewHolder {
 
     public void bind(Flight flight) {
 
-        flightDataTextView.setText(flight.getFlight_id());
+        if(flight.isIncoming()) {
+            flightDataTextView.setText(flight.getFlight_id() + " ↘");
+        } else {
+            flightDataTextView.setText(flight.getFlight_id() + " ↗");
+        }
     }
 
     static FlightDataViewHolder create(ViewGroup parent) {

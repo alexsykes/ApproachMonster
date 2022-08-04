@@ -8,14 +8,13 @@ public class RunwayRepository {
     private RunwayDao runwayDao;
     private Runway runway;
     private List<Runway> runwayList;
+    private int runway_id;
 
     public RunwayRepository(Application application) {
         ApproachDatabase db = ApproachDatabase.getDatabase(application);
         runwayDao = db.runwayDao();
-
-        this.runwayDao = runwayDao;
-        this.runway = runway;
-        this.runwayList = runwayList;
+        this.runway = getRunwayById(runway_id);
+        this.runwayList = getRunwayList();
     }
 
     void insertRunway(Runway runway) { runwayDao.insertRunway(runway); }
@@ -24,5 +23,5 @@ public class RunwayRepository {
         return runwayDao.getAllRunways();
     }
 
-    public Runway getRunway(int runway_id) { return runwayDao.getRunwayById(runway_id); }
+    public Runway getRunwayById(int runway_id) { return runwayDao.getRunwayById(runway_id); }
 }

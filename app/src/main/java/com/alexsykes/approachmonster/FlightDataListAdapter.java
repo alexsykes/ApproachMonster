@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.AsyncDifferConfig;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -44,7 +45,7 @@ public class FlightDataListAdapter extends RecyclerView.Adapter<FlightDataViewHo
 
     @Override
     public int getItemCount() {
-        Log.i(TAG, "getItemCount: " + flightList.size());
+//        Log.i(TAG, "getItemCount: " + flightList.size());
         return flightList.size();
     }
 }

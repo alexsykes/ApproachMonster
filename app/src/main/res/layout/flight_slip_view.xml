@@ -9,7 +9,7 @@
         android:id="@+id/flightDataTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/small_margin"
+        android:layout_margin="@dimen/margin_Start_End"
         android:text="@string/flight_data"
         android:textColor="@color/purple_700"
         app:layout_constraintEnd_toEndOf="parent"

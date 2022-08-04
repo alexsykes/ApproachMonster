@@ -33,15 +33,26 @@ public class Flight {
 
     private String destination;
 
+    public int getRunway() {
+        return runway;
+    }
+
+    public void setRunway(int runway) {
+        this.runway = runway;
+    }
+
+    private int runway;
+
     private String type;
 
     private boolean active = true;
     private boolean expired = false;
+    private boolean incoming;
 
     @ColumnInfo(defaultValue = "CURRENT_TIMESTAMP")
     long lastUpdated;
 
-    public Flight(@NonNull String flight_id, double lat, double lng, int altitude, int vector, int velocity, String destination, String type) {
+    public Flight(@NonNull String flight_id, double lat, double lng, int altitude, int vector, int velocity, String  destination, String type, boolean incoming, int runway) {
         this.flight_id = flight_id;
         this.lat = lat;
         this.lng = lng;
@@ -53,6 +64,8 @@ public class Flight {
         this.targetAltitude = altitude;
         this.targetVector = vector;
         this.targetVelocity = velocity;
+        this.incoming = incoming;
+        this.runway = runway;
         long currentTimeInMillis = System.currentTimeMillis();
         this.lastUpdated = currentTimeInMillis;
     }
@@ -175,6 +188,14 @@ public class Flight {
 
     public void setTargetVelocity(int targetVelocity) {
         this.targetVelocity = targetVelocity;
+    }
+
+    public boolean isIncoming() {
+        return incoming;
+    }
+
+    public void setIncoming(boolean incoming) {
+        this.incoming = incoming;
     }
 
     public ClimbData getClimbData(Flight flight)  {

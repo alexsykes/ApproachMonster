@@ -19,7 +19,7 @@ public interface FlightDao {
     @Query("UPDATE flights SET lat = :lat, lng = :lng WHERE flight_id = :flight_id")
     void updatePosition(double lat, double lng, String flight_id);
 
-    @Query("SELECT * FROM flights WHERE active")
+    @Query("SELECT * FROM flights WHERE NOT expired")
     List<Flight> getActiveFlightList();
 
     @Query("SELECT * FROM flights WHERE NOT active AND NOT expired")

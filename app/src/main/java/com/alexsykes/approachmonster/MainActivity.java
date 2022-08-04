@@ -19,6 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -29,6 +30,7 @@ import com.alexsykes.approachmonster.data.FlightViewModel;
 import com.alexsykes.approachmonster.data.Navaid;
 import com.alexsykes.approachmonster.data.NavaidViewModel;
 import com.alexsykes.approachmonster.data.Runway;
+import com.alexsykes.approachmonster.data.RunwayDao;
 import com.alexsykes.approachmonster.data.RunwayViewModel;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -62,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     final Handler handler = new Handler();
     private final String TAG = "Info";
     private FlightDao flightDao;
+    private RunwayDao runwayDao;
     private NavaidViewModel navaidViewModel;
     private FlightViewModel flightViewModel;
     private RunwayViewModel runwayViewModel;
@@ -76,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     int currentAlt, currentVector, currentVelocity;
     int targetAlt, targetVector, targetVelocity;
     String flight_id;
+    int activeOutgoing = 2, activeIncoming = 4;
 
     SharedPreferences prefs;
     SharedPreferences.Editor editor;
@@ -84,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     TextView infoBoxTitleTextView, navaidNameTextView, navaidDetailTextView, navaidTypeTextView;
     TextView  identTextView,  incAltTextView,  decAltTextView ;
     TextView    incVectorTextView,  decVectorTextView ;
-    TextView   incSpeedTextView,  decSpeedTextView ;
+    TextView   incSpeedTextView,  decSpeedTextView, inc10SpeedTextView,  dec10SpeedTextView ;
     TextView speedEdit, vectorEdit, altEdit, altLabel, vectorLabel, speedLabel;
     SwitchMaterial airfieldSwitch, vorSwitch, waypointSwitch;
     RecyclerView flightListRecyclerView;
@@ -112,6 +116,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         flightViewModel = new ViewModelProvider(this).get(FlightViewModel.class);
         runwayViewModel = new ViewModelProvider(this).get(RunwayViewModel.class);
         flightDao = db.flightDao();
+        runwayDao = db.runwayDao();
 
 //        nukeFlights(false);
         // Get saved data
@@ -155,6 +160,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         speedEdit    = findViewById(R.id.speedEditText);
         incSpeedTextView = findViewById(R.id.incSpeedTextView);
         decSpeedTextView   = findViewById(R.id.decSpeedTextView);
+        inc10SpeedTextView  = findViewById(R.id.inc10SpeedTextView);
+        dec10SpeedTextView  = findViewById(R.id.dec10SpeedTextView);
 
         airfieldSwitch = findViewById(R.id.airportSwitch);
         vorSwitch = findViewById(R.id.vorSwitch);
@@ -363,7 +370,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onClick(View v) {
                 if(targetVelocity < 500) {
-                    targetVelocity = targetVelocity + 10;
+                    targetVelocity = targetVelocity + 1;
                 } else {
                     targetVelocity = 500;
                 }
@@ -373,6 +380,30 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
 
         decSpeedTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (targetVelocity > 10) {
+                    targetVelocity = targetVelocity - 1;
+                }
+                speedEdit.setText(String.valueOf(targetVelocity));
+                updateFlight();
+            }
+        });
+
+        inc10SpeedTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(targetVelocity < 500) {
+                    targetVelocity = targetVelocity + 10;
+                } else {
+                    targetVelocity = 500;
+                }
+                speedEdit.setText(String.valueOf(targetVelocity));
+                updateFlight();
+            }
+        });
+
+        dec10SpeedTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (targetVelocity > 10) {
@@ -511,6 +542,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         public void run() {
             try{
                 randomDelay = (long) (Math.random() * 60000);
+//                randomDelay = 5000;
                 if(flightList.size() < 10) {
                     int randomInt = (int) (Math.random() * 2);
                     if(randomInt == 1) {
@@ -524,11 +556,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
 
                 // Show updated flightList
+                flightList = flightDao.getActiveFlightList();
                 flightListRecyclerView = findViewById(R.id.flightListRV);
 
                 LinearLayoutManager llm = new LinearLayoutManager(getApplicationContext());
                 flightListRecyclerView.setLayoutManager(llm);
                 flightListRecyclerView.setHasFixedSize(true);
+                flightListRecyclerView.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
 
                 final FlightDataListAdapter flightDataListAdapter = new FlightDataListAdapter(flightList);
                 flightListRecyclerView.setAdapter(flightDataListAdapter);
@@ -545,8 +579,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     };
 
     private void addOutbound() {
-        Runway runway = getRandomRunway();
-        Flight flight = new Flight("WA1893", runway.getLat(), runway.getLng(), runway.getElevation(), runway.getDirection(), 0, "EEFG", "B777");
+        Runway runway = runwayDao.getRunwayById(activeOutgoing);
+        Navaid destinationWayPoint  = navaidViewModel.getRandomNavaid();
+        String code = generateFlightCode();
+        Flight flight = new Flight(code, runway.getLat(), runway.getLng(), runway.getElevation()/100, runway.getDirection(), 0, destinationWayPoint.getCode(), "B777", false, activeOutgoing);
         flightDao.insertFlight(flight);
     }
 
@@ -566,7 +602,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         int startAlt = (int) 10 * (10 + (rnd.nextInt(35) ));
         int startVel  = (int) (250 + (rnd.nextInt(21)*10));
 
-        Flight flight = new Flight(code,startPoint.getLat(), startPoint.getLng(), startAlt, vector, startVel, "EGCC", "B747");
+        Flight flight = new Flight(code,startPoint.getLat(), startPoint.getLng(), startAlt, vector, startVel, "EGCC", "B747", true, activeIncoming);
 
         Log.i(TAG, "addIncoming: ");
 
