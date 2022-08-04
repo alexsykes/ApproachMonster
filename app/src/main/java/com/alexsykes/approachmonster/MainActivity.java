@@ -19,6 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.alexsykes.approachmonster.data.ApproachDatabase;
@@ -521,7 +522,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 } else {
                     Log.i(TAG, "No flight added - quota exceeded ");
                 }
+
+                // Show updated flightList
                 flightListRecyclerView = findViewById(R.id.flightListRV);
+
+                LinearLayoutManager llm = new LinearLayoutManager(getApplicationContext());
+                flightListRecyclerView.setLayoutManager(llm);
+                flightListRecyclerView.setHasFixedSize(true);
+
                 final FlightDataListAdapter flightDataListAdapter = new FlightDataListAdapter(flightList);
                 flightListRecyclerView.setAdapter(flightDataListAdapter);
             }

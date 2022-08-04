@@ -1,5 +1,6 @@
 package com.alexsykes.approachmonster;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,8 @@ import java.util.List;
 
 public class FlightDataListAdapter extends RecyclerView.Adapter<FlightDataViewHolder> {
     List<Flight> flightList;
+
+    private final String TAG = "Info";
 
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
@@ -41,6 +44,7 @@ public class FlightDataListAdapter extends RecyclerView.Adapter<FlightDataViewHo
 
     @Override
     public int getItemCount() {
+        Log.i(TAG, "getItemCount: " + flightList.size());
         return flightList.size();
     }
 }

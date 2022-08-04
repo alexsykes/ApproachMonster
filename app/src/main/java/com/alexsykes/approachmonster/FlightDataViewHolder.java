@@ -19,6 +19,7 @@ public class FlightDataViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(Flight flight) {
+
         flightDataTextView.setText(flight.getFlight_id());
     }
 
