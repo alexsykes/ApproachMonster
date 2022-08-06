@@ -110,6 +110,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         assert mapFragment != null;
         mapFragment.getMapAsync(this);
 
+        ControlFragment controlFragment = (ControlFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.fragmentContainerView);
+        assert mapFragment != null;
+
         // Setup data sources
         ApproachDatabase db = ApproachDatabase.getDatabase(this);
         navaidViewModel = new ViewModelProvider(this).get(NavaidViewModel.class);

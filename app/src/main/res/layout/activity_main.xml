@@ -341,7 +341,16 @@
         app:layout_constraintEnd_toEndOf="@id/topBar"
         app:layout_constraintStart_toStartOf="@id/topBar" />
 
-<!--    <com.alexsykes.approachmonster.CustomDrawableClass-->
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragmentContainerView"
+        android:name="com.alexsykes.approachmonster.ControlFragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!--    <com.alexsykes.approachmonster.CustomDrawableClass-->
 
 <!--        app:layout_constraintTop_toBottomOf="@id/topBar"-->
 <!--        app:layout_constraintStart_toStartOf="@id/topBar"-->
