@@ -439,7 +439,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
 
 //              Define icon
-                BitmapDescriptor square = BitmapFromVector(getApplicationContext(), R.drawable.ic_baseline_square_24);
+                BitmapDescriptor square = BitmapFromVector(getApplicationContext(), R.drawable.ic_square_12_display_green);
                 for (Flight flight: flightList) {
 //                  Get current position, then update
                     LatLng currentPosition = new LatLng(flight.getLat(), flight.getLng());
@@ -525,7 +525,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                     Polyline polyline = mMap.addPolyline((new PolylineOptions()).add(currentPosition, lineEnd)
                             .width(3)
-                            .color(Color.WHITE)
+                            .color(getResources().getColor(R.color.display_green))
                             .geodesic(true));
 
                     // Add to ListArrays

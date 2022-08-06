@@ -15,28 +15,28 @@
             android:strokeWidth="11"
             android:strokeLineCap="round"
             android:strokeMiterLimit="8"
-            android:pathData="M300, 300 L 300,5 " />
+            android:pathData="M300, 300 L 300,10 " />
         <path
             android:name="vert"
             android:strokeColor="@color/black"
             android:strokeWidth="11"
             android:strokeLineCap="round"
             android:strokeMiterLimit="8"
-            android:pathData="M320, 50 L 300,5 L 280, 50  " />
+            android:pathData="M320, 50 L 300,10 L 280, 50  " />
         <path
             android:name="vert"
-            android:strokeColor="@color/white"
+            android:strokeColor="@color/display_green"
             android:strokeWidth="5"
             android:strokeLineCap="round"
             android:strokeMiterLimit="5"
-            android:pathData="M300, 300 L 300,5 " />
+            android:pathData="M300, 300 L 300,10 " />
         <path
             android:name="vert"
-            android:strokeColor="@color/white"
+            android:strokeColor="@color/display_green"
             android:strokeWidth="5"
             android:strokeLineCap="round"
             android:strokeMiterLimit="5"
-            android:pathData="M320, 50 L 300,5 L 280, 50  " />
+            android:pathData="M320, 50 L 300,10 L 280, 50  " />
     </group>
 
 </vector>

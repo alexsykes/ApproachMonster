@@ -19,4 +19,7 @@
     <string name="plusTen">+10</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="_180_kts">180 kts</string>
+    <string name="_180">180°</string>
+    <string name="fl_200">FL xxx</string>
 </resources>

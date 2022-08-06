@@ -69,6 +69,8 @@ public class ControlFragment extends Fragment {
         incVectorView = rootView.findViewById(R.id.incVectorView);
         vectorView = rootView.findViewById(R.id.vectorView);
         rose_text_view = rootView.findViewById(R.id.rose_text_view);
+        rose_text_view.setRotation(0);
+        vectorView.setText("360°");
 
 
         decVectorView.setOnClickListener(new View.OnClickListener() {
@@ -95,7 +97,7 @@ public class ControlFragment extends Fragment {
             vector = vector - 360;
         }
         rose_text_view.setRotation(vector);
-        vectorView.setText(String.valueOf(vector));
+        vectorView.setText(String.valueOf(vector) + "°");
     }
 
     private void decrementVector() {
@@ -105,6 +107,6 @@ public class ControlFragment extends Fragment {
             vector = 360 + vector;
         }
         rose_text_view.setRotation(vector);
-        vectorView.setText(String.valueOf(vector));
+        vectorView.setText(String.valueOf(vector) + "°");
     }
 }
