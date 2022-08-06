@@ -18,6 +18,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -76,6 +77,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     MarkerManager markerManager;
     MarkerManager.Collection airfieldMarkerCollection, vorMarkerCollection, waypointMarkerCollection, currentFlightCollection;
 
+    ControlFragment controlFragment;
+
     int currentAlt, currentVector, currentVelocity;
     int targetAlt, targetVector, targetVelocity;
     String flight_id;
@@ -84,12 +87,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     SharedPreferences prefs;
     SharedPreferences.Editor editor;
 
-    LinearLayout infoBoxLinearLayout, flightInfoBoxLayout;
+    LinearLayout infoBoxLinearLayout;// flightInfoBoxLayout;
     TextView infoBoxTitleTextView, navaidNameTextView, navaidDetailTextView, navaidTypeTextView;
-    TextView  identTextView,  incAltTextView,  decAltTextView ;
-    TextView    incVectorTextView,  decVectorTextView ;
-    TextView   incSpeedTextView,  decSpeedTextView, inc10SpeedTextView,  dec10SpeedTextView ;
-    TextView speedEdit, vectorEdit, altEdit, altLabel, vectorLabel, speedLabel;
+//    TextView  identTextView,  incAltTextView,  decAltTextView ;
+//    TextView    incVectorTextView,  decVectorTextView ;
+//    TextView   incSpeedTextView,  decSpeedTextView, inc10SpeedTextView,  dec10SpeedTextView ;
+//    TextView speedEdit, vectorEdit, altEdit, altLabel, vectorLabel, speedLabel;
     SwitchMaterial airfieldSwitch, vorSwitch, waypointSwitch;
     RecyclerView flightListRecyclerView;
 
@@ -110,9 +113,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         assert mapFragment != null;
         mapFragment.getMapAsync(this);
 
-        ControlFragment controlFragment = (ControlFragment) getSupportFragmentManager()
+         controlFragment = (ControlFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.fragmentContainerView);
         assert controlFragment != null;
+
+        FragmentManager fm = getSupportFragmentManager();
+        fm.beginTransaction()
+                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                .hide(controlFragment)
+                .commit();
 
         // Setup data sources
         ApproachDatabase db = ApproachDatabase.getDatabase(this);
@@ -139,33 +148,33 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         navaidTypeTextView = findViewById(R.id.navaidTypeTextView);
         infoBoxLinearLayout.setVisibility(View.GONE);
 
-        flightInfoBoxLayout = findViewById(R.id.flightInfoBox);
-        flightInfoBoxLayout.setVisibility(View.GONE);
+//        flightInfoBoxLayout = findViewById(R.id.flightInfoBox);
+//        flightInfoBoxLayout.setVisibility(View.GONE);
 
-        identTextView  = findViewById(R.id.identTextView);
-        identTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                flightInfoBoxLayout.setVisibility(View.GONE);
-            }
-        });
-        incAltTextView  = findViewById(R.id.incAltTextView);
-        altEdit   = findViewById(R.id.altEditText);
-        decAltTextView  = findViewById(R.id.decAltTextView);
+//        identTextView  = findViewById(R.id.identTextView);
+//        identTextView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                flightInfoBoxLayout.setVisibility(View.GONE);
+//            }
+//        });
+//        incAltTextView  = findViewById(R.id.incAltTextView);
+//        altEdit   = findViewById(R.id.altEditText);
+//        decAltTextView  = findViewById(R.id.decAltTextView);
 
         flightListRecyclerView = findViewById(R.id.flightListRV);
 
-        altLabel = findViewById(R.id.altLabel);
-        speedLabel = findViewById(R.id.speedLabel);
-        vectorLabel = findViewById(R.id.vectorLabel);
-        vectorEdit  = findViewById(R.id.vectorEditText);
-        incVectorTextView  = findViewById(R.id.incVectorTextView);
-        decVectorTextView  = findViewById(R.id.decVectorTextView);
-        speedEdit    = findViewById(R.id.speedEditText);
-        incSpeedTextView = findViewById(R.id.incSpeedTextView);
-        decSpeedTextView   = findViewById(R.id.decSpeedTextView);
-        inc10SpeedTextView  = findViewById(R.id.inc10SpeedTextView);
-        dec10SpeedTextView  = findViewById(R.id.dec10SpeedTextView);
+//        altLabel = findViewById(R.id.altLabel);
+//        speedLabel = findViewById(R.id.speedLabel);
+//        vectorLabel = findViewById(R.id.vectorLabel);
+//        vectorEdit  = findViewById(R.id.vectorEditText);
+//        incVectorTextView  = findViewById(R.id.incVectorTextView);
+//        decVectorTextView  = findViewById(R.id.decVectorTextView);
+//        speedEdit    = findViewById(R.id.speedEditText);
+//        incSpeedTextView = findViewById(R.id.incSpeedTextView);
+//        decSpeedTextView   = findViewById(R.id.decSpeedTextView);
+//        inc10SpeedTextView  = findViewById(R.id.inc10SpeedTextView);
+//        dec10SpeedTextView  = findViewById(R.id.dec10SpeedTextView);
 
         airfieldSwitch = findViewById(R.id.airportSwitch);
         vorSwitch = findViewById(R.id.vorSwitch);
@@ -286,137 +295,143 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void flightMarkerClicked(Marker marker) {
-        flightInfoBoxLayout.setVisibility(View.VISIBLE);
+//        flightInfoBoxLayout.setVisibility(View.VISIBLE);
         flight_id = marker.getTitle();
-        identTextView.setText(flight_id);
+//        identTextView.setText(flight_id);
         Flight flight = flightDao.getFlight(flight_id);
 
         currentAlt = flight.getAltitude();
         currentVector = flight.getVector();
         currentVelocity = flight.getVelocity();
+        FragmentManager fm = getSupportFragmentManager();
+        fm.beginTransaction()
+                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                .show(controlFragment)
+                .commit();
+        controlFragment.setFlight(flight);
 
-        speedLabel.setText("Speed: " + currentVelocity + " kts");
-        vectorLabel.setText("Direction:  " + currentVector + "°");
-        altLabel.setText("Flight Level: " + currentAlt );
+//        speedLabel.setText("Speed: " + currentVelocity + " kts");
+//        vectorLabel.setText("Direction:  " + currentVector + "°");
+//        altLabel.setText("Flight Level: " + currentAlt );
 
         targetAlt = flight.getTargetAltitude();
         targetVector = flight.getTargetVector();
         targetVelocity = flight.getTargetVelocity();
 
-        vectorEdit.setText(String.valueOf(targetVector));
-        speedEdit.setText(String.valueOf(targetVelocity));
-        altEdit.setText(String.valueOf(targetAlt));
-
-        vectorEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(!hasFocus) {
-                    targetVector = Integer.valueOf(vectorEdit.getText().toString());
-
-                    updateFlight();
-                }
-            }
-        });
-
-        incAltTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (targetAlt < 450) {
-                    targetAlt = targetAlt + 10;
-                } else {
-                    targetAlt = 450;
-                }
-                altEdit.setText(String.valueOf(targetAlt));
-                updateFlight();
-            }
-        });
-
-        decAltTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (targetAlt > 10) {
-                    targetAlt = targetAlt - 10;
-                } else {
-                    targetAlt = 0;
-                }
-                altEdit.setText(String.valueOf(targetAlt));
-                updateFlight();
-            }
-        });
-
-        incVectorTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(targetVector < 360) {
-                    targetVector = targetVector + 10;
-                } else {
-                    targetVector = 10;
-                }
-                vectorEdit.setText(String.valueOf(targetVector));
-                updateFlight();
-            }
-        });
-
-        decVectorTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (targetVector >= 20) {
-                    targetVector = targetVector - 10;
-                } else {
-                    targetVector = 360;
-                }
-                vectorEdit.setText(String.valueOf(targetVector));
-                updateFlight();
-            }
-        });
-
-        incSpeedTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(targetVelocity < 500) {
-                    targetVelocity = targetVelocity + 1;
-                } else {
-                    targetVelocity = 500;
-                }
-                speedEdit.setText(String.valueOf(targetVelocity));
-                updateFlight();
-            }
-        });
-
-        decSpeedTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (targetVelocity > 10) {
-                    targetVelocity = targetVelocity - 1;
-                }
-                speedEdit.setText(String.valueOf(targetVelocity));
-                updateFlight();
-            }
-        });
-
-        inc10SpeedTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(targetVelocity < 500) {
-                    targetVelocity = targetVelocity + 10;
-                } else {
-                    targetVelocity = 500;
-                }
-                speedEdit.setText(String.valueOf(targetVelocity));
-                updateFlight();
-            }
-        });
-
-        dec10SpeedTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (targetVelocity > 10) {
-                    targetVelocity = targetVelocity - 10;
-                }
-                speedEdit.setText(String.valueOf(targetVelocity));
-                updateFlight();
-            }
-        });
+//        vectorEdit.setText(String.valueOf(targetVector));
+//        speedEdit.setText(String.valueOf(targetVelocity));
+//        altEdit.setText(String.valueOf(targetAlt));
+//
+//        vectorEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//            @Override
+//            public void onFocusChange(View v, boolean hasFocus) {
+//                if(!hasFocus) {
+//                    targetVector = Integer.valueOf(vectorEdit.getText().toString());
+//
+//                    updateFlight();
+//                }
+//            }
+//        });
+//
+//        incAltTextView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (targetAlt < 450) {
+//                    targetAlt = targetAlt + 10;
+//                } else {
+//                    targetAlt = 450;
+//                }
+//                altEdit.setText(String.valueOf(targetAlt));
+//                updateFlight();
+//            }
+//        });
+//
+//        decAltTextView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (targetAlt > 10) {
+//                    targetAlt = targetAlt - 10;
+//                } else {
+//                    targetAlt = 0;
+//                }
+//                altEdit.setText(String.valueOf(targetAlt));
+//                updateFlight();
+//            }
+//        });
+//
+//        incVectorTextView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if(targetVector < 360) {
+//                    targetVector = targetVector + 10;
+//                } else {
+//                    targetVector = 10;
+//                }
+//                vectorEdit.setText(String.valueOf(targetVector));
+//                updateFlight();
+//            }
+//        });
+//
+//        decVectorTextView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (targetVector >= 20) {
+//                    targetVector = targetVector - 10;
+//                } else {
+//                    targetVector = 360;
+//                }
+//                vectorEdit.setText(String.valueOf(targetVector));
+//                updateFlight();
+//            }
+//        });
+//
+//        incSpeedTextView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if(targetVelocity < 500) {
+//                    targetVelocity = targetVelocity + 1;
+//                } else {
+//                    targetVelocity = 500;
+//                }
+//                speedEdit.setText(String.valueOf(targetVelocity));
+//                updateFlight();
+//            }
+//        });
+//
+//        decSpeedTextView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (targetVelocity > 10) {
+//                    targetVelocity = targetVelocity - 1;
+//                }
+//                speedEdit.setText(String.valueOf(targetVelocity));
+//                updateFlight();
+//            }
+//        });
+//
+//        inc10SpeedTextView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if(targetVelocity < 500) {
+//                    targetVelocity = targetVelocity + 10;
+//                } else {
+//                    targetVelocity = 500;
+//                }
+//                speedEdit.setText(String.valueOf(targetVelocity));
+//                updateFlight();
+//            }
+//        });
+//
+//        dec10SpeedTextView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (targetVelocity > 10) {
+//                    targetVelocity = targetVelocity - 10;
+//                }
+//                speedEdit.setText(String.valueOf(targetVelocity));
+//                updateFlight();
+//            }
+//        });
     }
 
     private void updateFlight() {
@@ -460,9 +475,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                     // Display flight data for one flight
                     if (flight.getFlight_id().equals(flight_id)) {
-                        speedLabel.setText("Speed: " + currentVelocity + " kts");
-                        vectorLabel.setText("Direction:  " + currentVector + "°");
-                        altLabel.setText("Flight Level: " + currentAlt);
+//                        speedLabel.setText("Speed: " + currentVelocity + " kts");
+//                        vectorLabel.setText("Direction:  " + currentVector + "°");
+//                        altLabel.setText("Flight Level: " + currentAlt);
                     }
 //                  Vector calculation starts here
                     if(currentVector != targetVector) {

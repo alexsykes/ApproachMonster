@@ -45,7 +45,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="50dp"
-        android:layout_marginTop="125dp"
+        android:layout_marginTop="100dp"
         android:layout_marginEnd="50dp"
         android:elevation="@dimen/inset"
         app:layout_constraintEnd_toEndOf="parent"
@@ -60,7 +60,7 @@
             android:text="@string/minus"
             android:textAlignment="textStart"
             android:textColor="@color/display_green"
-            android:textSize="28sp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <TextView
@@ -71,7 +71,7 @@
             android:text="@string/_180"
             android:textAlignment="center"
             android:textColor="@color/display_green"
-            android:textSize="28sp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
 
@@ -83,7 +83,7 @@
             android:text="@string/plus"
             android:textAlignment="textEnd"
             android:textColor="@color/display_green"
-            android:textSize="28sp"
+            android:textSize="20sp"
             android:textStyle="bold" />
     </LinearLayout>
 
@@ -99,7 +99,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/incVelpcityView"
+            android:id="@+id/incVelocityView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="@dimen/inset"

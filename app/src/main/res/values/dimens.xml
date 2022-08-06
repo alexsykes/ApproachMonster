@@ -5,5 +5,5 @@
     <dimen name="margin_Start_End">4dp</dimen>
     <dimen name="label_width">8dp</dimen>
     <dimen name="value_width">60dp</dimen>
-    <dimen name="inset">3dp</dimen>
+    <dimen name="inset">10dp</dimen>
 </resources>
