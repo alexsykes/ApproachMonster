@@ -3,6 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="app/src/main/res/drawable/arrow.xml" value="0.306" />
+        <entry key="app/src/main/res/drawable/circle_200_black.xml" value="0.306" />
+        <entry key="app/src/main/res/drawable/circle_200_white.xml" value="0.306" />
         <entry key="app/src/main/res/drawable/circle_6.xml" value="0.526" />
         <entry key="app/src/main/res/drawable/circle_6_yellow.xml" value="0.1375" />
         <entry key="app/src/main/res/drawable/control_point_10.xml" value="0.1" />
@@ -12,7 +15,9 @@
         <entry key="app/src/main/res/drawable/custom_drawable.xml" value="0.5555" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_triangle_12.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/rose.xml" value="0.306" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.45" />
+        <entry key="app/src/main/res/layout/fragment_control.xml" value="0.195" />
       </map>
     </option>
   </component>

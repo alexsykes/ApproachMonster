@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:paddingStart="@dimen/inset"
+    android:paddingTop="@dimen/inset"
+    android:paddingBottom="@dimen/inset"
+    android:paddingEnd="@dimen/inset"
+    >
+    <item
+        android:drawable="@drawable/circle_200_black" />
+    <item
+        android:drawable="@drawable/circle_200_white"
+        android:top="@dimen/inset"
+        android:bottom="@dimen/inset"
+        android:start="@dimen/inset"
+        android:end="@dimen/inset" />
+</layer-list>

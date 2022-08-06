@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -16,6 +17,8 @@ import com.alexsykes.approachmonster.data.FlightViewModel;
  * create an instance of this fragment.
  */
 public class ControlFragment extends Fragment {
+
+    private TextView decSpeedView, incSpeedView, decVectorView, incVectorView, vectorView, rose_text_view;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -60,7 +63,48 @@ public class ControlFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        final View rootView =  inflater.inflate(R.layout.fragment_control, container, false);
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_control, container, false);
+        decVectorView = rootView.findViewById(R.id.decVectorView);
+        incVectorView = rootView.findViewById(R.id.incVectorView);
+        vectorView = rootView.findViewById(R.id.vectorView);
+        rose_text_view = rootView.findViewById(R.id.rose_text_view);
+
+
+        decVectorView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                decrementVector();
+            }
+        });
+
+        incVectorView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                incrementVector();
+            }
+        });
+
+        return rootView;
+    }
+
+    private void incrementVector() {
+        int vector = (int) rose_text_view.getRotation();
+        vector++;
+        if (vector > 360) {
+            vector = vector - 360;
+        }
+        rose_text_view.setRotation(vector);
+        vectorView.setText(String.valueOf(vector));
+    }
+
+    private void decrementVector() {
+        int vector = (int) rose_text_view.getRotation();
+        vector--;
+        if (vector < 1) {
+            vector = 360 + vector;
+        }
+        rose_text_view.setRotation(vector);
+        vectorView.setText(String.valueOf(vector));
     }
 }

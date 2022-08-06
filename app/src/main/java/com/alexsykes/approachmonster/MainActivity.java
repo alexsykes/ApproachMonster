@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         ControlFragment controlFragment = (ControlFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.fragmentContainerView);
-        assert mapFragment != null;
+        assert controlFragment != null;
 
         // Setup data sources
         ApproachDatabase db = ApproachDatabase.getDatabase(this);
