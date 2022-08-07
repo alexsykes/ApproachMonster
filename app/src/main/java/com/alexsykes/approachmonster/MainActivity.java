@@ -779,4 +779,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             navaidTypeTextView.setText(navaid.getType());
         }
     }
+
+    public void onClickCalled(Flight flight) {
+        Log.i(TAG, "onClickCalled: " + flight.getFlight_id());
+
+    }
 }

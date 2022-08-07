@@ -4,6 +4,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.AsyncDifferConfig;
@@ -17,6 +18,9 @@ import java.util.List;
 
 public class FlightDataListAdapter extends RecyclerView.Adapter<FlightDataViewHolder> {
     List<Flight> flightList;
+
+    AdapterView.OnItemClickListener listener;
+
 
     private final String TAG = "Info";
 
@@ -40,7 +44,7 @@ public class FlightDataListAdapter extends RecyclerView.Adapter<FlightDataViewHo
     @Override
     public void onBindViewHolder(@NonNull FlightDataViewHolder holder, int position) {
         Flight current = flightList.get(position);
-        holder.bind(current);
+        holder.bind(current, listener);
     }
 
     @Override
