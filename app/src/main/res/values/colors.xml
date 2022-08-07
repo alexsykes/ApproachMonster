@@ -10,5 +10,7 @@
     <color name="sea">#3722b1</color>
     <color name="sea_pale">#2196F3</color>
     <color name="display_green">#5DFF00</color>
+    <color name="outgoing">#FABF2B</color>
+    <color name="incoming">#AEED8A</color>
     <color name="white">#FFFFFFFF</color>
 </resources>

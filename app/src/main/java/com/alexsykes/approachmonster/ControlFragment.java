@@ -217,4 +217,8 @@ public class ControlFragment extends Fragment {
         Log.i(TAG, "updateFlight: " + flight_id);
         flightDao.updateFlight(flight_id, targetAltitude, targetVector, targetVelocity);
     }
+
+    public String getFlightId() {
+        return flight_id;
+    }
 }

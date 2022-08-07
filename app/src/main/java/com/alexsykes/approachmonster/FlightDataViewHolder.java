@@ -1,8 +1,6 @@
 package com.alexsykes.approachmonster;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,35 +8,41 @@ import android.widget.AdapterView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.alexsykes.approachmonster.data.Flight;
 
 public class FlightDataViewHolder extends RecyclerView.ViewHolder {
-    final TextView flightDataTextView;
+    final TextView flightDataTextView, flightIDTextView ;
     public static final String TAG = "Info";
 
     public FlightDataViewHolder(@NonNull View itemView) {
         super(itemView);
+        flightIDTextView = itemView.findViewById(R.id.flightIDTextView);
         flightDataTextView = itemView.findViewById(R.id.flightDataTextView);
     }
 
     public void bind(Flight flight, AdapterView.OnItemClickListener listener) {
+        int outgoing  = ContextCompat.getColor(itemView.getContext(), R.color.outgoing);
+        int incoming  = ContextCompat.getColor(itemView.getContext(), R.color.incoming);
+
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Log.i(TAG, "onClick: " + flight.getFlight_id());
-
+        flightDataTextView.setText(flight.getDestination());
+        flightDataTextView.setVisibility(View.VISIBLE);
                 Context context = v.getContext();
                 ((MainActivity) context).onClickCalled(flight);
             }
         });
 
         if(flight.isIncoming()) {
-            flightDataTextView.setText(flight.getFlight_id() + " ↘");
+            flightIDTextView.setText(flight.getFlight_id() + " ↘");
+            itemView.setBackgroundColor(incoming);
         } else {
-            flightDataTextView.setText(flight.getFlight_id() + " ↗");
+            flightIDTextView.setText(flight.getFlight_id() + " ↗");
+            itemView.setBackgroundColor(outgoing);
         }
     }
 

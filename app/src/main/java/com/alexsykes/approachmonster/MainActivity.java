@@ -1,5 +1,6 @@
 package com.alexsykes.approachmonster;
 
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -89,10 +91,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     LinearLayout infoBoxLinearLayout;// flightInfoBoxLayout;
     TextView infoBoxTitleTextView, navaidNameTextView, navaidDetailTextView, navaidTypeTextView;
-//    TextView  identTextView,  incAltTextView,  decAltTextView ;
-//    TextView    incVectorTextView,  decVectorTextView ;
-//    TextView   incSpeedTextView,  decSpeedTextView, inc10SpeedTextView,  dec10SpeedTextView ;
-//    TextView speedEdit, vectorEdit, altEdit, altLabel, vectorLabel, speedLabel;
     SwitchMaterial airfieldSwitch, vorSwitch, waypointSwitch;
     RecyclerView flightListRecyclerView;
 
@@ -148,33 +146,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         navaidTypeTextView = findViewById(R.id.navaidTypeTextView);
         infoBoxLinearLayout.setVisibility(View.GONE);
 
-//        flightInfoBoxLayout = findViewById(R.id.flightInfoBox);
-//        flightInfoBoxLayout.setVisibility(View.GONE);
-
-//        identTextView  = findViewById(R.id.identTextView);
-//        identTextView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                flightInfoBoxLayout.setVisibility(View.GONE);
-//            }
-//        });
-//        incAltTextView  = findViewById(R.id.incAltTextView);
-//        altEdit   = findViewById(R.id.altEditText);
-//        decAltTextView  = findViewById(R.id.decAltTextView);
 
         flightListRecyclerView = findViewById(R.id.flightListRV);
 
-//        altLabel = findViewById(R.id.altLabel);
-//        speedLabel = findViewById(R.id.speedLabel);
-//        vectorLabel = findViewById(R.id.vectorLabel);
-//        vectorEdit  = findViewById(R.id.vectorEditText);
-//        incVectorTextView  = findViewById(R.id.incVectorTextView);
-//        decVectorTextView  = findViewById(R.id.decVectorTextView);
-//        speedEdit    = findViewById(R.id.speedEditText);
-//        incSpeedTextView = findViewById(R.id.incSpeedTextView);
-//        decSpeedTextView   = findViewById(R.id.decSpeedTextView);
-//        inc10SpeedTextView  = findViewById(R.id.inc10SpeedTextView);
-//        dec10SpeedTextView  = findViewById(R.id.dec10SpeedTextView);
 
         airfieldSwitch = findViewById(R.id.airportSwitch);
         vorSwitch = findViewById(R.id.vorSwitch);
@@ -782,6 +756,47 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public void onClickCalled(Flight flight) {
         Log.i(TAG, "onClickCalled: " + flight.getFlight_id());
+        FragmentManager fm = getSupportFragmentManager();
 
+        // If fragment hidden, then show fragment
+        if (controlFragment.isHidden()) {
+            fm.beginTransaction()
+                    .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                    .show(controlFragment)
+                    .commit();
+        } else
+//          Hide fragment if current flight clicked
+            if (flight.getFlight_id().equals(controlFragment.getFlightId())){
+            fm.beginTransaction()
+                    .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                    .hide(controlFragment)
+                    .commit();
+        }
+        controlFragment.setFlight(flight);
     }
+
+//    public void showHideFragment(final Fragment fragment, Flight flight){
+//        FragmentTransaction fragTransaction = getFragmentManager().beginTransaction();
+//        fragTransaction.setCustomAnimations(android.R.animator.fade_in,
+//                android.R.animator.fade_out);
+//
+//        if (fragment.isHidden()) {
+//            FragmentManager fm = getSupportFragmentManager();
+//            fm.beginTransaction()
+//                    .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+//                    .show(controlFragment)
+//                    .commit();
+//            controlFragment.setFlight(flight);
+//            Log.i(TAG,"Show");
+//        } else {
+//            FragmentManager fm = getSupportFragmentManager();
+//            fm.beginTransaction()
+//                    .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+//                    .hide(controlFragment)
+//                    .commit();
+//            Log.i(TAG,"Hide");
+//        }
+//
+//        fragTransaction.commit();
+//    }
 }
