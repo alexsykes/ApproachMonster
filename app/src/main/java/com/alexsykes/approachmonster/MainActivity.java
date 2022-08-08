@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private NavaidViewModel navaidViewModel;
     private FlightViewModel flightViewModel;
     private RunwayViewModel runwayViewModel;
-    private boolean airfieldsVisible, waypointsVisible, vorsVisible, clockwise;
+    private boolean airfieldsVisible, waypointsVisible, vorsVisible, clockwise, runPaused;
     List<Navaid> airfieldList, vorList, waypointList;
     List<Flight> flightList;
     List<Runway> runwayList;
@@ -136,66 +136,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         waypointList = navaidViewModel.getAllWaypoints();
         runwayList = runwayViewModel.getRunwayList();
         setupUi();
-    }
-
-    private void setupUi() {
-        infoBoxLinearLayout = findViewById(R.id.infoBoxLinearLayout);
-        infoBoxTitleTextView =  findViewById(R.id.infoBoxTitleTextView);
-        navaidNameTextView =  findViewById(R.id.navaidNameTextView);
-        navaidDetailTextView = findViewById(R.id.navaidDetailTextView);
-        navaidTypeTextView = findViewById(R.id.navaidTypeTextView);
-        infoBoxLinearLayout.setVisibility(View.GONE);
-
-
-        flightListRecyclerView = findViewById(R.id.flightListRV);
-
-
-        airfieldSwitch = findViewById(R.id.airportSwitch);
-        vorSwitch = findViewById(R.id.vorSwitch);
-        waypointSwitch = findViewById(R.id.waypointSwitch);
-        airfieldSwitch.setChecked(airfieldsVisible);
-        waypointSwitch.setChecked(waypointsVisible);
-        vorSwitch.setChecked(vorsVisible);
-
-        vorSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if( isChecked) {
-                    vorMarkerCollection.showAll();
-                    editor.putBoolean("vorsVisible", true);
-                } else {
-                    vorMarkerCollection.hideAll();
-                    editor.putBoolean("vorsVisible", false);
-                }
-                editor.apply();
-            }
-        });
-        waypointSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if( isChecked) {
-                    waypointMarkerCollection.showAll();
-                    editor.putBoolean("waypointsVisible", true);
-                } else {
-                    waypointMarkerCollection.hideAll();
-                    editor.putBoolean("waypointsVisible", false);
-                }
-                editor.apply();
-            }
-        });
-        airfieldSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if( isChecked) {
-                    airfieldMarkerCollection.showAll();
-                    editor.putBoolean("airfieldsVisible", true);
-                } else {
-                    airfieldMarkerCollection.hideAll();
-                    editor.putBoolean("airfieldsVisible", false);
-                }
-                editor.apply();
-            }
-        });
     }
 
     @Override
@@ -268,157 +208,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         handler.post(mainLoop);
     }
 
-    private void flightMarkerClicked(Marker marker) {
-//        flightInfoBoxLayout.setVisibility(View.VISIBLE);
-        flight_id = marker.getTitle();
-//        identTextView.setText(flight_id);
-        Flight flight = flightDao.getFlight(flight_id);
-
-        currentAlt = flight.getAltitude();
-        currentVector = flight.getVector();
-        currentVelocity = flight.getVelocity();
-        FragmentManager fm = getSupportFragmentManager();
-        fm.beginTransaction()
-                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
-                .show(controlFragment)
-                .commit();
-        controlFragment.setFlight(flight);
-
-//        speedLabel.setText("Speed: " + currentVelocity + " kts");
-//        vectorLabel.setText("Direction:  " + currentVector + "°");
-//        altLabel.setText("Flight Level: " + currentAlt );
-
-        targetAlt = flight.getTargetAltitude();
-        targetVector = flight.getTargetVector();
-        targetVelocity = flight.getTargetVelocity();
-
-//        vectorEdit.setText(String.valueOf(targetVector));
-//        speedEdit.setText(String.valueOf(targetVelocity));
-//        altEdit.setText(String.valueOf(targetAlt));
-//
-//        vectorEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-//            @Override
-//            public void onFocusChange(View v, boolean hasFocus) {
-//                if(!hasFocus) {
-//                    targetVector = Integer.valueOf(vectorEdit.getText().toString());
-//
-//                    updateFlight();
-//                }
-//            }
-//        });
-//
-//        incAltTextView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (targetAlt < 450) {
-//                    targetAlt = targetAlt + 10;
-//                } else {
-//                    targetAlt = 450;
-//                }
-//                altEdit.setText(String.valueOf(targetAlt));
-//                updateFlight();
-//            }
-//        });
-//
-//        decAltTextView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (targetAlt > 10) {
-//                    targetAlt = targetAlt - 10;
-//                } else {
-//                    targetAlt = 0;
-//                }
-//                altEdit.setText(String.valueOf(targetAlt));
-//                updateFlight();
-//            }
-//        });
-//
-//        incVectorTextView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if(targetVector < 360) {
-//                    targetVector = targetVector + 10;
-//                } else {
-//                    targetVector = 10;
-//                }
-//                vectorEdit.setText(String.valueOf(targetVector));
-//                updateFlight();
-//            }
-//        });
-//
-//        decVectorTextView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (targetVector >= 20) {
-//                    targetVector = targetVector - 10;
-//                } else {
-//                    targetVector = 360;
-//                }
-//                vectorEdit.setText(String.valueOf(targetVector));
-//                updateFlight();
-//            }
-//        });
-//
-//        incSpeedTextView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if(targetVelocity < 500) {
-//                    targetVelocity = targetVelocity + 1;
-//                } else {
-//                    targetVelocity = 500;
-//                }
-//                speedEdit.setText(String.valueOf(targetVelocity));
-//                updateFlight();
-//            }
-//        });
-//
-//        decSpeedTextView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (targetVelocity > 10) {
-//                    targetVelocity = targetVelocity - 1;
-//                }
-//                speedEdit.setText(String.valueOf(targetVelocity));
-//                updateFlight();
-//            }
-//        });
-//
-//        inc10SpeedTextView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if(targetVelocity < 500) {
-//                    targetVelocity = targetVelocity + 10;
-//                } else {
-//                    targetVelocity = 500;
-//                }
-//                speedEdit.setText(String.valueOf(targetVelocity));
-//                updateFlight();
-//            }
-//        });
-//
-//        dec10SpeedTextView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (targetVelocity > 10) {
-//                    targetVelocity = targetVelocity - 10;
-//                }
-//                speedEdit.setText(String.valueOf(targetVelocity));
-//                updateFlight();
-//            }
-//        });
-    }
-
-    private void updateFlight() {
-        flightDao.updateFlight(flight_id, targetAlt, targetVector, targetVelocity);
-    }
-
     Runnable flightProgressTimer = new Runnable() {
 
         @Override
         public void run() {
             try{
 //              Get current flight list
-//                flightList = flightViewModel.getActiveFlightList();
                 flightList = flightDao.getActiveFlightList();
 //              Clear display
                 currentFlightCollection.clear();
@@ -511,6 +306,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     markerOptionsSquare.icon(square);
                     markerOptionsSquare.anchor(0.5f, 0.5f);
                     Marker currentMarker = currentFlightCollection.addMarker(markerOptionsSquare);
+                    currentMarker.setTag(flight.getFlight_id());
 
                     Polyline polyline = mMap.addPolyline((new PolylineOptions()).add(currentPosition, lineEnd)
                             .width(3)
@@ -530,6 +326,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }
     };
+
     Runnable mainLoop = new Runnable() {
         @Override
         public void run() {
@@ -570,6 +367,91 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }
     };
+
+    private void setupUi() {
+        infoBoxLinearLayout = findViewById(R.id.infoBoxLinearLayout);
+        infoBoxTitleTextView =  findViewById(R.id.infoBoxTitleTextView);
+        navaidNameTextView =  findViewById(R.id.navaidNameTextView);
+        navaidDetailTextView = findViewById(R.id.navaidDetailTextView);
+        navaidTypeTextView = findViewById(R.id.navaidTypeTextView);
+        infoBoxLinearLayout.setVisibility(View.GONE);
+
+
+        flightListRecyclerView = findViewById(R.id.flightListRV);
+
+
+        airfieldSwitch = findViewById(R.id.airportSwitch);
+        vorSwitch = findViewById(R.id.vorSwitch);
+        waypointSwitch = findViewById(R.id.waypointSwitch);
+        airfieldSwitch.setChecked(airfieldsVisible);
+        waypointSwitch.setChecked(waypointsVisible);
+        vorSwitch.setChecked(vorsVisible);
+
+        vorSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if( isChecked) {
+                    vorMarkerCollection.showAll();
+                    editor.putBoolean("vorsVisible", true);
+                } else {
+                    vorMarkerCollection.hideAll();
+                    editor.putBoolean("vorsVisible", false);
+                }
+                editor.apply();
+            }
+        });
+        waypointSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if( isChecked) {
+                    waypointMarkerCollection.showAll();
+                    editor.putBoolean("waypointsVisible", true);
+                } else {
+                    waypointMarkerCollection.hideAll();
+                    editor.putBoolean("waypointsVisible", false);
+                }
+                editor.apply();
+            }
+        });
+        airfieldSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if( isChecked) {
+                    airfieldMarkerCollection.showAll();
+                    editor.putBoolean("airfieldsVisible", true);
+                } else {
+                    airfieldMarkerCollection.hideAll();
+                    editor.putBoolean("airfieldsVisible", false);
+                }
+                editor.apply();
+            }
+        });
+    }
+
+    private void flightMarkerClicked(Marker marker) {
+//        flightInfoBoxLayout.setVisibility(View.VISIBLE);
+        flight_id = marker.getTitle();
+//        identTextView.setText(flight_id);
+        Flight flight = flightDao.getFlight(flight_id);
+
+        currentAlt = flight.getAltitude();
+        currentVector = flight.getVector();
+        currentVelocity = flight.getVelocity();
+        FragmentManager fm = getSupportFragmentManager();
+        fm.beginTransaction()
+                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                .show(controlFragment)
+                .commit();
+        controlFragment.setFlight(flight);
+
+        targetAlt = flight.getTargetAltitude();
+        targetVector = flight.getTargetVector();
+        targetVelocity = flight.getTargetVelocity();
+    }
+
+    private void updateFlight() {
+        flightDao.updateFlight(flight_id, targetAlt, targetVector, targetVelocity);
+    }
 
     private void addOutbound() {
         Runway runway = runwayDao.getRunwayById(activeOutgoing);
@@ -758,6 +640,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         Log.i(TAG, "onClickCalled: " + flight.getFlight_id());
         FragmentManager fm = getSupportFragmentManager();
 
+        if(!runPaused) {
+            handler.removeCallbacks(mainLoop);
+            handler.removeCallbacks(flightProgressTimer);
+            runPaused = true;
+            Log.i(TAG, "Paused: ");
+        } else {
+            handler.post(mainLoop);
+            handler.post(flightProgressTimer);
+            runPaused = false;
+            Log.i(TAG, "Unpaused: ");
+        }
         // If fragment hidden, then show fragment
         if (controlFragment.isHidden()) {
             fm.beginTransaction()
@@ -774,29 +667,4 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
         controlFragment.setFlight(flight);
     }
-
-//    public void showHideFragment(final Fragment fragment, Flight flight){
-//        FragmentTransaction fragTransaction = getFragmentManager().beginTransaction();
-//        fragTransaction.setCustomAnimations(android.R.animator.fade_in,
-//                android.R.animator.fade_out);
-//
-//        if (fragment.isHidden()) {
-//            FragmentManager fm = getSupportFragmentManager();
-//            fm.beginTransaction()
-//                    .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
-//                    .show(controlFragment)
-//                    .commit();
-//            controlFragment.setFlight(flight);
-//            Log.i(TAG,"Show");
-//        } else {
-//            FragmentManager fm = getSupportFragmentManager();
-//            fm.beginTransaction()
-//                    .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
-//                    .hide(controlFragment)
-//                    .commit();
-//            Log.i(TAG,"Hide");
-//        }
-//
-//        fragTransaction.commit();
-//    }
 }
